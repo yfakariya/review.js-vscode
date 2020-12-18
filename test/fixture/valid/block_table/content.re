@@ -63,6 +63,6 @@ COL1	COL2
 //table[TABLE-10][インライン複数]{
 COL1	COL2	COL3
 --------------
-@<tt>{A}	@<code>{printf();}	@<strong>{GOOD}
+@<tt>{A}	@<code>{printf();}	@<strong>{GOOD}か@<strong>{BAD}
 @<tt>{B}	@<code>{print();}	@<strong>{BAD}
 //}
