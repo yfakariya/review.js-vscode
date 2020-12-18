@@ -321,7 +321,7 @@
                       "offset": 64
                     },
                     "end": {
-                      "offset": 38
+                      "offset": 39
                     }
                   },
                   "text": "console.log(\"だと思ったか…！？\");\nconsole.log(\"はろわー\");"
@@ -590,7 +590,7 @@
                       "offset": 161
                     },
                     "end": {
-                      "offset": 131
+                      "offset": 132
                     }
                   },
                   "text": "#define mrb_string_p(o) (mrb_type(o) == MRB_TT_STRING)"
@@ -775,7 +775,7 @@
                       "offset": 251
                     },
                     "end": {
-                      "offset": 252
+                      "offset": 253
                     }
                   },
                   "text": "1"
@@ -789,7 +789,7 @@
                       "offset": 259
                     },
                     "end": {
-                      "offset": 262
+                      "offset": 263
                     }
                   },
                   "text": "3\n4"
@@ -803,7 +803,7 @@
                       "offset": 269
                     },
                     "end": {
-                      "offset": 220
+                      "offset": 221
                     }
                   },
                   "text": "6"

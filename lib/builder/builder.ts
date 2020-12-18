@@ -65,6 +65,25 @@ export interface TableCell {
 }
 
 /**
+ * テキストセル。
+ */
+interface TextCell {
+    text: string;
+    location: {
+        start: {
+            offset: number,
+            line: number,
+            column: number
+        },
+        end: {
+            offset: number,
+            line: number,
+            column: number
+        }
+    };
+}
+
+/**
  * デフォルトのビルダ。
  * Re:VIEWのASTから何らかのテキストに変換する時はこのクラスを拡張し作成する。
  */
@@ -82,7 +101,7 @@ export class DefaultBuilder implements Builder {
         return Promise.all(book.allChunks.map(chunk => this.processAst(chunk))).then(() => null);
     }
 
-    private getDefaultVisitorArg(process: BuilderProcess) : TreeVisitorArg {
+    private getDefaultVisitorArg(process: BuilderProcess): TreeVisitorArg {
         return {
             visitDefaultPre: (_node: SyntaxTree) => {
             },
@@ -335,7 +354,7 @@ export class DefaultBuilder implements Builder {
         }
 
         // 再帰的に呼び出す（ラベルを使用した参照の場合、キャプションはインライン要素を含む可能性がある）
-        visit(chapter.headline.caption,this.getDefaultVisitorArg(process));
+        visit(chapter.headline.caption, this.getDefaultVisitorArg(process));
         return false;
     }
 
@@ -379,49 +398,122 @@ export class DefaultBuilder implements Builder {
     }
 
     parseTable(tableContents: SyntaxTree[]): Table {
+        return this.parseTableContents(this.parseTableLines(tableContents));
+    }
+
+    parseTableLines(tableContents: SyntaxTree[]): (InlineElementSyntaxTree | TextCell)[][] {
+        const result: (InlineElementSyntaxTree | TextCell)[][] = [];
+        let currentLine: (InlineElementSyntaxTree | TextCell)[] = [];
+        let lastLineNumber = tableContents.length > 0 ? tableContents[0].location.start.line : 0;
+        tableContents.forEach(node => {
+            // 行の最後でノードが切り替わる場合に改行文字が含まれないので、
+            // 行番号でチェックし、変わっていたら改行処理。
+            if (node.location.start.line !== lastLineNumber) {
+                result.push(currentLine);
+                currentLine = [];
+            }
+
+            lastLineNumber = node.location.start.line;
+
+            if (node.isInlineElement()) {
+                currentLine.push(node.toInlineElement());
+                return;
+            }
+
+            // 行成分に分解する。
+            const positionOffset = node.location.start.offset;
+            const lineNumberOffset = node.location.start.line;
+            const columnOffset = node.location.start.column;
+
+            const text = node.toTextNode().text;
+            let currentOffset = 0;
+            let lineNumber = 0;
+            do {
+                const lineEnd = text.indexOf("\n", currentOffset);
+                const startLocation = {
+                    offset: currentOffset + positionOffset,
+                    line: lineNumber + lineNumberOffset,
+                    column: currentOffset + columnOffset
+                };
+
+                const nextOffset = lineEnd + 1;
+                const content =
+                    lineEnd < 0 ?
+                        // 最終行
+                        text.substring(currentOffset) :
+                        // そうでない
+                        text.substring(currentOffset, nextOffset);
+
+                currentLine.push(
+                    {
+                        text: content,
+                        location: {
+                            start: startLocation,
+                            end: {
+                                offset: startLocation.offset + content.length - 1,
+                                line: startLocation.line,
+                                column: startLocation.column + content.length - 1
+                            }
+                        }
+                    }
+                );
+
+                lastLineNumber = startLocation.line;
+
+                if (lineEnd < 0) {
+                    break;
+                }
+
+                result.push(currentLine);
+                currentLine = [];
+
+                currentOffset = nextOffset;
+                lineNumber++;
+            } while (currentOffset < text.length);
+        });
+
+        if (currentLine.length > 0) {
+            result.push(currentLine);
+        }
+
+        return result;
+    }
+
+    parseTableContents(lines: (InlineElementSyntaxTree | TextCell)[][]): Table {
         const rows: TableCell[][] = [];
         let currentRow: TableCell[] = [];
         let currentCell: SyntaxTree[] = [];
         let headerRowCount = 0;
 
-        tableContents.forEach(node => {
-            if (node.isInlineElement()) {
-                currentCell.push(node);
-                return;
-            }
-
-            // 行成分に分解する。
-            const lines = node.toTextNode().text.split(/\r?\n/g);
-            let totalOffsetOrRowHead = 0;
-            for (let r = 0; r < lines.length; r++) {
-                if (r > 0) {
-                    // 改行処理
-                    if (currentCell.length > 0) {
-                        currentRow.push({ nodes: currentCell });
-                        currentCell = [];
-                    }
-
-                    if (currentRow.length > 0) {
-                        rows.push(currentRow);
-                        currentRow = [];
-                    }
+        lines.forEach((line, rowNumber) => {
+            line.forEach((node, columnNumber) => {
+                if (node instanceof InlineElementSyntaxTree) {
+                    currentCell.push(node);
+                    return;
                 }
 
                 // Ruby実装との互換性のためトリム
-                const line = lines[r].trim();
+                const textCells =
+                    line.length === 1 ?
+                        node.text.trim() :
+                        columnNumber === 0 ?
+                            node.text.trimStart() :
+                            columnNumber === line.length - 1 ?
+                                node.text.trimEnd() :
+                                node.text;
 
-                if (line.match(/^(-{12,}|={12,})$/g) != null) {
+                if (textCells.match(/^(-{12,}|={12,})$/g) != null) {
                     if (headerRowCount === 0) {
-                        headerRowCount = r;
+                        headerRowCount = rowNumber;
                     }
 
-                    continue;
+                    return;
                 }
 
-                const cells = line.split(/\t/g);
-                let columnOffset = 0;
-                cells.forEach(cell => {
-                    if (!cell.length) {
+                const cells = textCells.split(/\t/g);
+                const lastTokenNumber = cells.length - 1;
+                cells.forEach((cell, tokenNumber) => {
+                    if (!cell.length && !currentCell.length) {
                         // 空の列はスキップ
                         return;
                     }
@@ -436,33 +528,30 @@ export class DefaultBuilder implements Builder {
                     currentCell.push(
                         new TextNodeSyntaxTree({
                             syntax: "InlineElementContentText",
-                            location: {
-                                start: {
-                                    line: node.location.start.line + r,
-                                    column: columnOffset,
-                                    offset: node.location.start.offset + totalOffsetOrRowHead + columnOffset,
-                                },
-                                end: {
-                                    line: node.location.start.line + r,
-                                    column: columnOffset + cell.length,
-                                    offset: node.location.start.offset + totalOffsetOrRowHead + columnOffset + cell.length
-                                }
-                            },
+                            // ここはとりあえず仮の値を入れておく。使わないし。
+                            location: node.location,
                             text: text
                         })
                     );
 
-                    // 次の列へ。
-                    if (currentCell.length > 0) {
+                    // 次の列へ。ただし最後のトークンは除く（次にインラインが来るかもしれない）
+                    if (tokenNumber !== lastTokenNumber && currentCell.length > 0) {
                         currentRow.push({ nodes: currentCell });
                         currentCell = [];
                     }
-                    // タブ文字分オフセットを増やす
-                    columnOffset++;
                 });
+            }); // line.forEach
 
-                totalOffsetOrRowHead += columnOffset;
-            } // row
+            // 改行処理
+            if (currentCell.length > 0) {
+                currentRow.push({ nodes: currentCell });
+                currentCell = [];
+            }
+
+            if (currentRow.length > 0) {
+                rows.push(currentRow);
+                currentRow = [];
+            }
         });
 
         // 最終行の改行処理

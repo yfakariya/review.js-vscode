@@ -450,7 +450,7 @@
                       "offset": 151
                     },
                     "end": {
-                      "offset": 350
+                      "offset": 351
                     }
                   },
                   "text": "#include <mruby.h>\n#include <mruby/compile.h>\n\nint\nmain(void)\n{\n  mrb_value result;\n  mrb_state *mrb = mrb_open();\n  result = mrb_load_string(mrb, \"p 'hello world!'\");\n  mrb_close(mrb);\n  return 0;\n}"

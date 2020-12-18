@@ -305,7 +305,7 @@
                       "offset": 56
                     },
                     "end": {
-                      "offset": 34
+                      "offset": 35
                     }
                   },
                   "text": "COL1\tCOL2\n------------\n列1\t列2"

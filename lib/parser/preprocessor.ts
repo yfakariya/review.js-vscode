@@ -178,15 +178,16 @@ export class SyntaxPreprocessor implements Preprocessor {
                                 column: info?.column ?? node.location.start.column
                             },
                             end: {
-                                offset: node.location.start.offset - 1,
+                                offset: node.location.start.offset,
                                 line: void 0,
                                 column: void 0,
                             }
                         },
                         // @<br>{} などは info がない
-                        text: info?.offset == null ? "" : chunk.process.input!.substring(info!.offset, node.location.start.offset - 1)
+                        text: info?.offset == null ? "" : chunk.process.input!.substring(info!.offset, node.location.start.offset)
                     });
-                    if (textNode.text) {
+
+                    if (textNode.text.length > 0) {
                         resultNodes.push(textNode);
                     }
                     resultNodes.push(node);
@@ -207,12 +208,12 @@ export class SyntaxPreprocessor implements Preprocessor {
                                 column: info.column
                             },
                             end: {
-                                offset: node.location.start.offset - 1,
+                                offset: node.location.start.offset,
                                 line: void 0,
                                 column: void 0,
                             }
                         },
-                        text: chunk.process.input!.substring(info.offset, node.location.start.offset - 1)
+                        text: chunk.process.input!.substring(info.offset, node.location.start.offset)
                     });
                     if (textNode.text) {
                         resultNodes.push(textNode);
@@ -232,14 +233,14 @@ export class SyntaxPreprocessor implements Preprocessor {
                             column: info.column,
                         },
                         end: {
-                            offset: node.location.start.offset - 1,
+                            offset: node.location.start.offset,
                             line: void 0,
                             column: void 0,
                         }
                     },
                     text: chunk.process.input!.substring(info.offset, lastNode!.location!.end!.offset)
                 });
-                if (textNode.text) {
+                if (textNode.text.length > 0) {
                     resultNodes.push(textNode);
                 }
             }
@@ -259,7 +260,7 @@ export class SyntaxPreprocessor implements Preprocessor {
                         column: first.location.start.column
                     },
                     end: {
-                        offset: last.location.start.offset - 1,
+                        offset: last.location.start.offset,
                         line: void 0,
                         column: void 0,
                     }

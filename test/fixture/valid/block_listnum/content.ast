@@ -321,7 +321,7 @@
                       "offset": 70
                     },
                     "end": {
-                      "offset": 41
+                      "offset": 42
                     }
                   },
                   "text": "console.log(\"だと思ったか…！？\");\nconsole.log(\"はろわー\");"
@@ -506,7 +506,7 @@
                       "offset": 154
                     },
                     "end": {
-                      "offset": 155
+                      "offset": 156
                     }
                   },
                   "text": "1"
@@ -520,7 +520,7 @@
                       "offset": 162
                     },
                     "end": {
-                      "offset": 165
+                      "offset": 166
                     }
                   },
                   "text": "3\n4"
@@ -534,7 +534,7 @@
                       "offset": 172
                     },
                     "end": {
-                      "offset": 121
+                      "offset": 122
                     }
                   },
                   "text": "6"

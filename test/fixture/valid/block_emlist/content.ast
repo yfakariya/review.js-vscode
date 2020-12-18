@@ -203,7 +203,7 @@
                       "offset": 47
                     },
                     "end": {
-                      "offset": 24
+                      "offset": 25
                     }
                   },
                   "text": "console.log(\"hoge\");"
@@ -236,7 +236,7 @@
                       "offset": 83
                     },
                     "end": {
-                      "offset": 72
+                      "offset": 73
                     }
                   },
                   "text": "console.log(\"fuga\");"
@@ -269,7 +269,7 @@
                       "offset": 119
                     },
                     "end": {
-                      "offset": 120
+                      "offset": 121
                     }
                   },
                   "text": "1"
@@ -283,7 +283,7 @@
                       "offset": 127
                     },
                     "end": {
-                      "offset": 130
+                      "offset": 131
                     }
                   },
                   "text": "3\n4"
@@ -297,7 +297,7 @@
                       "offset": 137
                     },
                     "end": {
-                      "offset": 108
+                      "offset": 109
                     }
                   },
                   "text": "6"

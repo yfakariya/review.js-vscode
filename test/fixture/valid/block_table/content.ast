@@ -7,9 +7,9 @@
       "offset": 0
     },
     "end": {
-      "line": 62,
+      "line": 69,
       "column": 1,
-      "offset": 692
+      "offset": 856
     }
   },
   "childNodes": [
@@ -22,9 +22,9 @@
           "offset": 0
         },
         "end": {
-          "line": 62,
+          "line": 69,
           "column": 1,
-          "offset": 692
+          "offset": 856
         }
       },
       "childNodes": [
@@ -37,9 +37,9 @@
               "offset": 0
             },
             "end": {
-              "line": 62,
+              "line": 69,
               "column": 1,
-              "offset": 692
+              "offset": 856
             }
           },
           "comments": [],
@@ -221,10 +221,10 @@
                       "offset": 32
                     },
                     "end": {
-                      "offset": 60
+                      "offset": 61
                     }
                   },
-                  "text": "COL1\tCOL2\n--------------\nテスト"
+                  "text": "COL1\tCOL2\n--------------\nテスト\t"
                 },
                 {
                   "ruleName": "InlineElement",
@@ -286,10 +286,10 @@
                       "offset": 79
                     },
                     "end": {
-                      "offset": 85
+                      "offset": 86
                     }
                   },
-                  "text": "\n閉じ波括弧"
+                  "text": "\n閉じ波括弧\t"
                 },
                 {
                   "ruleName": "InlineElement",
@@ -351,10 +351,10 @@
                       "offset": 106
                     },
                     "end": {
-                      "offset": 109
+                      "offset": 110
                     }
                   },
-                  "text": "\n改行"
+                  "text": "\n改行\t"
                 },
                 {
                   "ruleName": "InlineElement",
@@ -638,7 +638,7 @@
                       "offset": 178
                     },
                     "end": {
-                      "offset": 149
+                      "offset": 150
                     }
                   },
                   "text": "COL1\tCOL2\n-----------\n列1\t列2"
@@ -773,7 +773,7 @@
                       "offset": 237
                     },
                     "end": {
-                      "offset": 210
+                      "offset": 211
                     }
                   },
                   "text": "COL1\tCOL2\n------------\n列1\t列2\n------------\n列3\t列4"
@@ -908,7 +908,7 @@
                       "offset": 317
                     },
                     "end": {
-                      "offset": 289
+                      "offset": 290
                     }
                   },
                   "text": "COL1\tCOL2\nCOL3\tCOL4\n------------\n列1\t列2"
@@ -1043,7 +1043,7 @@
                       "offset": 394
                     },
                     "end": {
-                      "offset": 360
+                      "offset": 361
                     }
                   },
                   "text": "COL1\tCOL2\n------------\n列1"
@@ -1178,7 +1178,7 @@
                       "offset": 458
                     },
                     "end": {
-                      "offset": 424
+                      "offset": 425
                     }
                   },
                   "text": "COL1\tCOL2\n------------\n列1\t列2\t列3"
@@ -1313,7 +1313,7 @@
                       "offset": 523
                     },
                     "end": {
-                      "offset": 494
+                      "offset": 495
                     }
                   },
                   "text": "COL1\tCOL2\tCOL3\n------------\n列1\t\t列3"
@@ -1448,7 +1448,7 @@
                       "offset": 586
                     },
                     "end": {
-                      "offset": 562
+                      "offset": 563
                     }
                   },
                   "text": "COL1\tCOL2\n------------\n 列1 \t 列2 \n　列1　\t　列2　"
@@ -1464,9 +1464,9 @@
                   "offset": 634
                 },
                 "end": {
-                  "line": 62,
+                  "line": 63,
                   "column": 1,
-                  "offset": 692
+                  "offset": 693
                 }
               },
               "symbol": "table",
@@ -1583,10 +1583,572 @@
                       "offset": 659
                     },
                     "end": {
-                      "offset": 633
+                      "offset": 634
                     }
                   },
                   "text": "COL1\tCOL2\n============\n列1\t列2"
+                }
+              ]
+            },
+            {
+              "ruleName": "BlockElement",
+              "location": {
+                "start": {
+                  "line": 63,
+                  "column": 1,
+                  "offset": 693
+                },
+                "end": {
+                  "line": 69,
+                  "column": 1,
+                  "offset": 856
+                }
+              },
+              "symbol": "table",
+              "args": [
+                {
+                  "ruleName": "BracketArg",
+                  "location": {
+                    "start": {
+                      "line": 63,
+                      "column": 8,
+                      "offset": 700
+                    },
+                    "end": {
+                      "line": 63,
+                      "column": 18,
+                      "offset": 710
+                    }
+                  },
+                  "childNodes": [
+                    {
+                      "ruleName": "BracketArgSubs",
+                      "location": {
+                        "start": {
+                          "line": 63,
+                          "column": 9,
+                          "offset": 701
+                        },
+                        "end": {
+                          "line": 63,
+                          "column": 17,
+                          "offset": 709
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "BracketArgText",
+                          "location": {
+                            "start": {
+                              "line": 63,
+                              "column": 9,
+                              "offset": 701
+                            },
+                            "end": {
+                              "line": 63,
+                              "column": 17,
+                              "offset": 709
+                            }
+                          },
+                          "text": "TABLE-10"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ruleName": "BracketArg",
+                  "location": {
+                    "start": {
+                      "line": 63,
+                      "column": 18,
+                      "offset": 710
+                    },
+                    "end": {
+                      "line": 63,
+                      "column": 27,
+                      "offset": 719
+                    }
+                  },
+                  "childNodes": [
+                    {
+                      "ruleName": "BracketArgSubs",
+                      "location": {
+                        "start": {
+                          "line": 63,
+                          "column": 19,
+                          "offset": 711
+                        },
+                        "end": {
+                          "line": 63,
+                          "column": 26,
+                          "offset": 718
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "BracketArgText",
+                          "location": {
+                            "start": {
+                              "line": 63,
+                              "column": 19,
+                              "offset": 711
+                            },
+                            "end": {
+                              "line": 63,
+                              "column": 26,
+                              "offset": 718
+                            }
+                          },
+                          "text": "インライン複数"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "no": 10,
+              "childNodes": [
+                {
+                  "ruleName": "BlockElementContentText",
+                  "location": {
+                    "start": {
+                      "line": 64,
+                      "column": 1,
+                      "offset": 721
+                    },
+                    "end": {
+                      "offset": 751
+                    }
+                  },
+                  "text": "COL1\tCOL2\tCOL3\n--------------"
+                },
+                {
+                  "ruleName": "InlineElement",
+                  "location": {
+                    "start": {
+                      "line": 66,
+                      "column": 1,
+                      "offset": 751
+                    },
+                    "end": {
+                      "line": 66,
+                      "column": 9,
+                      "offset": 759
+                    }
+                  },
+                  "symbol": "tt",
+                  "childNodes": [
+                    {
+                      "ruleName": "InlineElementContents",
+                      "location": {
+                        "start": {
+                          "line": 66,
+                          "column": 7,
+                          "offset": 757
+                        },
+                        "end": {
+                          "line": 66,
+                          "column": 8,
+                          "offset": 758
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "InlineElementContentText",
+                          "location": {
+                            "start": {
+                              "line": 66,
+                              "column": 7,
+                              "offset": 757
+                            },
+                            "end": {
+                              "line": 66,
+                              "column": 8,
+                              "offset": 758
+                            }
+                          },
+                          "text": "A"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ruleName": "BlockElementContentText",
+                  "location": {
+                    "start": {
+                      "line": 66,
+                      "column": 9,
+                      "offset": 759
+                    },
+                    "end": {
+                      "offset": 760
+                    }
+                  },
+                  "text": "\t"
+                },
+                {
+                  "ruleName": "InlineElement",
+                  "location": {
+                    "start": {
+                      "line": 66,
+                      "column": 10,
+                      "offset": 760
+                    },
+                    "end": {
+                      "line": 66,
+                      "column": 28,
+                      "offset": 778
+                    }
+                  },
+                  "symbol": "code",
+                  "childNodes": [
+                    {
+                      "ruleName": "InlineElementContents",
+                      "location": {
+                        "start": {
+                          "line": 66,
+                          "column": 18,
+                          "offset": 768
+                        },
+                        "end": {
+                          "line": 66,
+                          "column": 27,
+                          "offset": 777
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "InlineElementContentText",
+                          "location": {
+                            "start": {
+                              "line": 66,
+                              "column": 18,
+                              "offset": 768
+                            },
+                            "end": {
+                              "line": 66,
+                              "column": 27,
+                              "offset": 777
+                            }
+                          },
+                          "text": "printf();"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ruleName": "BlockElementContentText",
+                  "location": {
+                    "start": {
+                      "line": 66,
+                      "column": 28,
+                      "offset": 778
+                    },
+                    "end": {
+                      "offset": 779
+                    }
+                  },
+                  "text": "\t"
+                },
+                {
+                  "ruleName": "InlineElement",
+                  "location": {
+                    "start": {
+                      "line": 66,
+                      "column": 29,
+                      "offset": 779
+                    },
+                    "end": {
+                      "line": 66,
+                      "column": 44,
+                      "offset": 794
+                    }
+                  },
+                  "symbol": "strong",
+                  "childNodes": [
+                    {
+                      "ruleName": "InlineElementContents",
+                      "location": {
+                        "start": {
+                          "line": 66,
+                          "column": 39,
+                          "offset": 789
+                        },
+                        "end": {
+                          "line": 66,
+                          "column": 43,
+                          "offset": 793
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "InlineElementContentText",
+                          "location": {
+                            "start": {
+                              "line": 66,
+                              "column": 39,
+                              "offset": 789
+                            },
+                            "end": {
+                              "line": 66,
+                              "column": 43,
+                              "offset": 793
+                            }
+                          },
+                          "text": "GOOD"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ruleName": "BlockElementContentText",
+                  "location": {
+                    "start": {
+                      "line": 66,
+                      "column": 44,
+                      "offset": 794
+                    },
+                    "end": {
+                      "offset": 795
+                    }
+                  },
+                  "text": "か"
+                },
+                {
+                  "ruleName": "InlineElement",
+                  "location": {
+                    "start": {
+                      "line": 66,
+                      "column": 45,
+                      "offset": 795
+                    },
+                    "end": {
+                      "line": 66,
+                      "column": 59,
+                      "offset": 809
+                    }
+                  },
+                  "symbol": "strong",
+                  "childNodes": [
+                    {
+                      "ruleName": "InlineElementContents",
+                      "location": {
+                        "start": {
+                          "line": 66,
+                          "column": 55,
+                          "offset": 805
+                        },
+                        "end": {
+                          "line": 66,
+                          "column": 58,
+                          "offset": 808
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "InlineElementContentText",
+                          "location": {
+                            "start": {
+                              "line": 66,
+                              "column": 55,
+                              "offset": 805
+                            },
+                            "end": {
+                              "line": 66,
+                              "column": 58,
+                              "offset": 808
+                            }
+                          },
+                          "text": "BAD"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ruleName": "InlineElement",
+                  "location": {
+                    "start": {
+                      "line": 67,
+                      "column": 1,
+                      "offset": 810
+                    },
+                    "end": {
+                      "line": 67,
+                      "column": 9,
+                      "offset": 818
+                    }
+                  },
+                  "symbol": "tt",
+                  "childNodes": [
+                    {
+                      "ruleName": "InlineElementContents",
+                      "location": {
+                        "start": {
+                          "line": 67,
+                          "column": 7,
+                          "offset": 816
+                        },
+                        "end": {
+                          "line": 67,
+                          "column": 8,
+                          "offset": 817
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "InlineElementContentText",
+                          "location": {
+                            "start": {
+                              "line": 67,
+                              "column": 7,
+                              "offset": 816
+                            },
+                            "end": {
+                              "line": 67,
+                              "column": 8,
+                              "offset": 817
+                            }
+                          },
+                          "text": "B"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ruleName": "BlockElementContentText",
+                  "location": {
+                    "start": {
+                      "line": 67,
+                      "column": 9,
+                      "offset": 818
+                    },
+                    "end": {
+                      "offset": 819
+                    }
+                  },
+                  "text": "\t"
+                },
+                {
+                  "ruleName": "InlineElement",
+                  "location": {
+                    "start": {
+                      "line": 67,
+                      "column": 10,
+                      "offset": 819
+                    },
+                    "end": {
+                      "line": 67,
+                      "column": 27,
+                      "offset": 836
+                    }
+                  },
+                  "symbol": "code",
+                  "childNodes": [
+                    {
+                      "ruleName": "InlineElementContents",
+                      "location": {
+                        "start": {
+                          "line": 67,
+                          "column": 18,
+                          "offset": 827
+                        },
+                        "end": {
+                          "line": 67,
+                          "column": 26,
+                          "offset": 835
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "InlineElementContentText",
+                          "location": {
+                            "start": {
+                              "line": 67,
+                              "column": 18,
+                              "offset": 827
+                            },
+                            "end": {
+                              "line": 67,
+                              "column": 26,
+                              "offset": 835
+                            }
+                          },
+                          "text": "print();"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ruleName": "BlockElementContentText",
+                  "location": {
+                    "start": {
+                      "line": 67,
+                      "column": 27,
+                      "offset": 836
+                    },
+                    "end": {
+                      "offset": 837
+                    }
+                  },
+                  "text": "\t"
+                },
+                {
+                  "ruleName": "InlineElement",
+                  "location": {
+                    "start": {
+                      "line": 67,
+                      "column": 28,
+                      "offset": 837
+                    },
+                    "end": {
+                      "line": 67,
+                      "column": 42,
+                      "offset": 851
+                    }
+                  },
+                  "symbol": "strong",
+                  "childNodes": [
+                    {
+                      "ruleName": "InlineElementContents",
+                      "location": {
+                        "start": {
+                          "line": 67,
+                          "column": 38,
+                          "offset": 847
+                        },
+                        "end": {
+                          "line": 67,
+                          "column": 41,
+                          "offset": 850
+                        }
+                      },
+                      "childNodes": [
+                        {
+                          "ruleName": "InlineElementContentText",
+                          "location": {
+                            "start": {
+                              "line": 67,
+                              "column": 38,
+                              "offset": 847
+                            },
+                            "end": {
+                              "line": 67,
+                              "column": 41,
+                              "offset": 850
+                            }
+                          },
+                          "text": "BAD"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }

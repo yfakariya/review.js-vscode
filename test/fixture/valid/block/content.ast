@@ -221,7 +221,7 @@
                       "offset": 34
                     },
                     "end": {
-                      "offset": 13
+                      "offset": 14
                     }
                   },
                   "text": "var hoge = confirm(\"test\");\n// JS comment"

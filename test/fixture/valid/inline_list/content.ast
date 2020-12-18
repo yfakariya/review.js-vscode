@@ -321,7 +321,7 @@
                       "offset": 64
                     },
                     "end": {
-                      "offset": 38
+                      "offset": 39
                     }
                   },
                   "text": "console.log(\"だと思ったか…！？\");\nconsole.log(\"はろわー\");"
