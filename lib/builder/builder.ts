@@ -68,7 +68,7 @@ export interface TableCell {
  * テキストセル。
  */
 interface TextCell {
-    text: String;
+    text: string;
     location: {
         start: {
             offset: number,
