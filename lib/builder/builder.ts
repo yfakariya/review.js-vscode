@@ -511,7 +511,8 @@ export class DefaultBuilder implements Builder {
                 }
 
                 const cells = textCells.split(/\t/g);
-                cells.forEach(cell => {
+                const lastTokenNumber = cells.length - 1;
+                cells.forEach((cell, tokenNumber) => {
                     if (!cell.length && !currentCell.length) {
                         // 空の列はスキップ
                         return;
@@ -533,13 +534,13 @@ export class DefaultBuilder implements Builder {
                         })
                     );
 
-                    // 次の列へ。
-                    if (currentCell.length > 0) {
+                    // 次の列へ。ただし最後のトークンは除く（次にインラインが来るかもしれない）
+                    if (tokenNumber !== lastTokenNumber && currentCell.length > 0) {
                         currentRow.push({ nodes: currentCell });
                         currentCell = [];
                     }
                 });
-            });
+            }); // line.forEach
 
             // 改行処理
             if (currentCell.length > 0) {
