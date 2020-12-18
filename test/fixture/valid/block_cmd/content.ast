@@ -152,7 +152,7 @@
                       "offset": 33
                     },
                     "end": {
-                      "offset": 25
+                      "offset": 26
                     }
                   },
                   "text": "$ git clone https://github.com/borisyankov/DefinitelyTyped"

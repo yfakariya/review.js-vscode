@@ -254,7 +254,7 @@
                       "offset": 35
                     },
                     "end": {
-                      "offset": 16
+                      "offset": 17
                     }
                   },
                   "text": "var hoge = ...;"
@@ -422,7 +422,7 @@
                       "offset": 79
                     },
                     "end": {
-                      "offset": 60
+                      "offset": 61
                     }
                   },
                   "text": "var fuga = ...;"

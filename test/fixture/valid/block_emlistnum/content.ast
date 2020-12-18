@@ -152,7 +152,7 @@
                       "offset": 41
                     },
                     "end": {
-                      "offset": 27
+                      "offset": 28
                     }
                   },
                   "text": "console.log(\"hoge\");\ndebugger;"
@@ -185,7 +185,7 @@
                       "offset": 90
                     },
                     "end": {
-                      "offset": 91
+                      "offset": 92
                     }
                   },
                   "text": "1"
@@ -199,7 +199,7 @@
                       "offset": 98
                     },
                     "end": {
-                      "offset": 101
+                      "offset": 102
                     }
                   },
                   "text": "3\n4"
@@ -213,7 +213,7 @@
                       "offset": 108
                     },
                     "end": {
-                      "offset": 76
+                      "offset": 77
                     }
                   },
                   "text": "6"

@@ -221,7 +221,7 @@
                       "offset": 46
                     },
                     "end": {
-                      "offset": 12
+                      "offset": 13
                     }
                   },
                   "text": "digraph g { a -> b; }"

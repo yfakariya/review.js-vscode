@@ -203,7 +203,7 @@
                       "offset": 56
                     },
                     "end": {
-                      "offset": 28
+                      "offset": 29
                     }
                   },
                   "text": "console.log(\"Hello world\");"
