@@ -404,7 +404,17 @@ export class DefaultBuilder implements Builder {
     parseTableLines(tableContents: SyntaxTree[]): (InlineElementSyntaxTree | TextCell)[][] {
         const result: (InlineElementSyntaxTree | TextCell)[][] = [];
         let currentLine: (InlineElementSyntaxTree | TextCell)[] = [];
+        let lastLineNumber = tableContents.length > 0 ? tableContents[0].location.start.line : 0;
         tableContents.forEach(node => {
+            // 行の最後でノードが切り替わる場合に改行文字が含まれないので、
+            // 行番号でチェックし、変わっていたら改行処理。
+            if (node.location.start.line !== lastLineNumber) {
+                result.push(currentLine);
+                currentLine = [];
+            }
+
+            lastLineNumber = node.location.start.line;
+
             if (node.isInlineElement()) {
                 currentLine.push(node.toInlineElement());
                 return;
@@ -429,10 +439,10 @@ export class DefaultBuilder implements Builder {
                 const nextOffset = lineEnd + 1;
                 const content =
                     lineEnd < 0 ?
-                    // 最終行
-                    text.substring(currentOffset) :
-                    // そうでない
-                    text.substring(currentOffset, nextOffset);
+                        // 最終行
+                        text.substring(currentOffset) :
+                        // そうでない
+                        text.substring(currentOffset, nextOffset);
 
                 currentLine.push(
                     {
@@ -448,6 +458,8 @@ export class DefaultBuilder implements Builder {
                     }
                 );
 
+                lastLineNumber = startLocation.line;
+
                 if (lineEnd < 0) {
                     break;
                 }
@@ -457,7 +469,7 @@ export class DefaultBuilder implements Builder {
 
                 currentOffset = nextOffset;
                 lineNumber++;
-            } while(currentOffset < text.length);
+            } while (currentOffset < text.length);
         });
 
         if (currentLine.length > 0) {
@@ -483,12 +495,12 @@ export class DefaultBuilder implements Builder {
                 // Ruby実装との互換性のためトリム
                 const textCells =
                     line.length === 1 ?
-                    node.text.trim() :
-                    columnNumber === 0 ?
-                    node.text.trimStart() :
-                    columnNumber === line.length - 1 ?
-                    node.text.trimEnd() :
-                    node.text;
+                        node.text.trim() :
+                        columnNumber === 0 ?
+                            node.text.trimStart() :
+                            columnNumber === line.length - 1 ?
+                                node.text.trimEnd() :
+                                node.text;
 
                 if (textCells.match(/^(-{12,}|={12,})$/g) != null) {
                     if (headerRowCount === 0) {
