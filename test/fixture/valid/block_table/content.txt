@@ -84,7 +84,8 @@
 ◆→開始:表←◆
 表1.10　インライン複数
 
-★COL1☆	★COL2☆
-△A☆	△printf();☆
+★COL1☆	★COL2☆	★COL3☆
+△A☆	△printf();☆	★GOOD☆
+△B☆	△print();☆	★BAD☆
 ◆→終了:表←◆
 
