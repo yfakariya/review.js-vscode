@@ -295,42 +295,99 @@ var DefaultBuilder = /** @class */ (function () {
         // 特に何もしない
     };
     DefaultBuilder.prototype.parseTable = function (tableContents) {
+        return this.parseTableContents(this.parseTableLines(tableContents));
+    };
+    DefaultBuilder.prototype.parseTableLines = function (tableContents) {
+        var result = [];
+        var currentLine = [];
+        var lastLineNumber = tableContents.length > 0 ? tableContents[0].location.start.line : 0;
+        tableContents.forEach(function (node) {
+            // 行の最後でノードが切り替わる場合に改行文字が含まれないので、
+            // 行番号でチェックし、変わっていたら改行処理。
+            if (node.location.start.line !== lastLineNumber) {
+                result.push(currentLine);
+                currentLine = [];
+            }
+            lastLineNumber = node.location.start.line;
+            if (node.isInlineElement()) {
+                currentLine.push(node.toInlineElement());
+                return;
+            }
+            // 行成分に分解する。
+            var positionOffset = node.location.start.offset;
+            var lineNumberOffset = node.location.start.line;
+            var columnOffset = node.location.start.column;
+            var text = node.toTextNode().text;
+            var currentOffset = 0;
+            var lineNumber = 0;
+            do {
+                var lineEnd = text.indexOf("\n", currentOffset);
+                var startLocation = {
+                    offset: currentOffset + positionOffset,
+                    line: lineNumber + lineNumberOffset,
+                    column: currentOffset + columnOffset
+                };
+                var nextOffset = lineEnd + 1;
+                var content = lineEnd < 0 ?
+                    // 最終行
+                    text.substring(currentOffset) :
+                    // そうでない
+                    text.substring(currentOffset, nextOffset);
+                currentLine.push({
+                    text: content,
+                    location: {
+                        start: startLocation,
+                        end: {
+                            offset: startLocation.offset + content.length - 1,
+                            line: startLocation.line,
+                            column: startLocation.column + content.length - 1
+                        }
+                    }
+                });
+                lastLineNumber = startLocation.line;
+                if (lineEnd < 0) {
+                    break;
+                }
+                result.push(currentLine);
+                currentLine = [];
+                currentOffset = nextOffset;
+                lineNumber++;
+            } while (currentOffset < text.length);
+        });
+        if (currentLine.length > 0) {
+            result.push(currentLine);
+        }
+        return result;
+    };
+    DefaultBuilder.prototype.parseTableContents = function (lines) {
         var rows = [];
         var currentRow = [];
         var currentCell = [];
         var headerRowCount = 0;
-        tableContents.forEach(function (node) {
-            if (node.isInlineElement()) {
-                currentCell.push(node);
-                return;
-            }
-            // 行成分に分解する。
-            var lines = node.toTextNode().text.split(/\r?\n/g);
-            var totalOffsetOrRowHead = 0;
-            var _loop_1 = function (r) {
-                if (r > 0) {
-                    // 改行処理
-                    if (currentCell.length > 0) {
-                        currentRow.push({ nodes: currentCell });
-                        currentCell = [];
-                    }
-                    if (currentRow.length > 0) {
-                        rows.push(currentRow);
-                        currentRow = [];
-                    }
+        lines.forEach(function (line, rowNumber) {
+            line.forEach(function (node, columnNumber) {
+                if (node instanceof parser_1.InlineElementSyntaxTree) {
+                    currentCell.push(node);
+                    return;
                 }
                 // Ruby実装との互換性のためトリム
-                var line = lines[r].trim();
-                if (line.match(/^(-{12,}|={12,})$/g) != null) {
+                var textCells = line.length === 1 ?
+                    node.text.trim() :
+                    columnNumber === 0 ?
+                        node.text.trimStart() :
+                        columnNumber === line.length - 1 ?
+                            node.text.trimEnd() :
+                            node.text;
+                if (textCells.match(/^(-{12,}|={12,})$/g) != null) {
                     if (headerRowCount === 0) {
-                        headerRowCount = r;
+                        headerRowCount = rowNumber;
                     }
-                    return "continue";
+                    return;
                 }
-                var cells = line.split(/\t/g);
-                var columnOffset = 0;
-                cells.forEach(function (cell) {
-                    if (!cell.length) {
+                var cells = textCells.split(/\t/g);
+                var lastTokenNumber = cells.length - 1;
+                cells.forEach(function (cell, tokenNumber) {
+                    if (!cell.length && !currentCell.length) {
                         // 空の列はスキップ
                         return;
                     }
@@ -343,33 +400,26 @@ var DefaultBuilder = /** @class */ (function () {
                     }
                     currentCell.push(new parser_1.TextNodeSyntaxTree({
                         syntax: "InlineElementContentText",
-                        location: {
-                            start: {
-                                line: node.location.start.line + r,
-                                column: columnOffset,
-                                offset: node.location.start.offset + totalOffsetOrRowHead + columnOffset,
-                            },
-                            end: {
-                                line: node.location.start.line + r,
-                                column: columnOffset + cell.length,
-                                offset: node.location.start.offset + totalOffsetOrRowHead + columnOffset + cell.length
-                            }
-                        },
+                        // ここはとりあえず仮の値を入れておく。使わないし。
+                        location: node.location,
                         text: text
                     }));
-                    // 次の列へ。
-                    if (currentCell.length > 0) {
+                    // 次の列へ。ただし最後のトークンは除く（次にインラインが来るかもしれない）
+                    if (tokenNumber !== lastTokenNumber && currentCell.length > 0) {
                         currentRow.push({ nodes: currentCell });
                         currentCell = [];
                     }
-                    // タブ文字分オフセットを増やす
-                    columnOffset++;
                 });
-                totalOffsetOrRowHead += columnOffset;
-            };
-            for (var r = 0; r < lines.length; r++) {
-                _loop_1(r);
-            } // row
+            }); // line.forEach
+            // 改行処理
+            if (currentCell.length > 0) {
+                currentRow.push({ nodes: currentCell });
+                currentCell = [];
+            }
+            if (currentRow.length > 0) {
+                rows.push(currentRow);
+                currentRow = [];
+            }
         });
         // 最終行の改行処理
         if (currentCell.length > 0) {
@@ -5272,15 +5322,15 @@ var SyntaxPreprocessor = /** @class */ (function () {
                                 column: (_c = info_1 === null || info_1 === void 0 ? void 0 : info_1.column) !== null && _c !== void 0 ? _c : node.location.start.column
                             },
                             end: {
-                                offset: node.location.start.offset - 1,
+                                offset: node.location.start.offset,
                                 line: void 0,
                                 column: void 0,
                             }
                         },
                         // @<br>{} などは info がない
-                        text: (info_1 === null || info_1 === void 0 ? void 0 : info_1.offset) == null ? "" : chunk.process.input.substring(info_1.offset, node.location.start.offset - 1)
+                        text: (info_1 === null || info_1 === void 0 ? void 0 : info_1.offset) == null ? "" : chunk.process.input.substring(info_1.offset, node.location.start.offset)
                     });
-                    if (textNode.text) {
+                    if (textNode.text.length > 0) {
                         resultNodes_1.push(textNode);
                     }
                     resultNodes_1.push(node);
@@ -5301,12 +5351,12 @@ var SyntaxPreprocessor = /** @class */ (function () {
                                 column: info_1.column
                             },
                             end: {
-                                offset: node.location.start.offset - 1,
+                                offset: node.location.start.offset,
                                 line: void 0,
                                 column: void 0,
                             }
                         },
-                        text: chunk.process.input.substring(info_1.offset, node.location.start.offset - 1)
+                        text: chunk.process.input.substring(info_1.offset, node.location.start.offset)
                     });
                     if (textNode.text) {
                         resultNodes_1.push(textNode);
@@ -5325,14 +5375,14 @@ var SyntaxPreprocessor = /** @class */ (function () {
                             column: info_1.column,
                         },
                         end: {
-                            offset: node.location.start.offset - 1,
+                            offset: node.location.start.offset,
                             line: void 0,
                             column: void 0,
                         }
                     },
                     text: chunk.process.input.substring(info_1.offset, lastNode_1.location.end.offset)
                 });
-                if (textNode.text) {
+                if (textNode.text.length > 0) {
                     resultNodes_1.push(textNode);
                 }
             }
@@ -5351,7 +5401,7 @@ var SyntaxPreprocessor = /** @class */ (function () {
                         column: first.location.start.column
                     },
                     end: {
-                        offset: last.location.start.offset - 1,
+                        offset: last.location.start.offset,
                         line: void 0,
                         column: void 0,
                     }
