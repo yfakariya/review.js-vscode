@@ -33,7 +33,6 @@ describe("ReVIEW構文の", () => {
             let path = "test/fixture/valid/";
 
             let ignoreFiles = [
-                "block_dont_has_body.re", // noindent がまだサポートされていない
                 "ch01.re", // lead, emplist がまだサポートされていない
             ];
             function matchIgnoreFiles(filePath: string) {
