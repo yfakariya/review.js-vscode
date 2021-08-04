@@ -1052,11 +1052,9 @@ var HtmlBuilder = /** @class */ (function (_super) {
         // paragraphPre 中で処理
         return false;
     };
-    HtmlBuilder.prototype.block_blankline_pre = function (process, _node) {
+    HtmlBuilder.prototype.block_blankline = function (process, _node) {
         process.outRaw("<p><br /></p>\n");
-    };
-    HtmlBuilder.prototype.block_blankline_post = function (process, _node) {
-        process.outRaw("");
+        return false;
     };
     HtmlBuilder.prototype.block_source_pre = function (process, node) {
         process.outRaw("<div class=\"source-code\">\n");

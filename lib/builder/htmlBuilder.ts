@@ -636,12 +636,9 @@ export class HtmlBuilder extends DefaultBuilder {
         return false;
     }
 
-    block_blankline_pre(process: BuilderProcess, _node: BlockElementSyntaxTree) {
+    block_blankline(process: BuilderProcess, _node: BlockElementSyntaxTree) {
         process.outRaw("<p><br /></p>\n");
-    }
-
-    block_blankline_post(process: BuilderProcess, _node: BlockElementSyntaxTree) {
-        process.outRaw("");
+        return false;
     }
 
     block_source_pre(process: BuilderProcess, node: BlockElementSyntaxTree) {
