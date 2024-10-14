@@ -19,17 +19,15 @@ module.exports = function (grunt) {
 			}
 		},
 
-		tslint: {
+		eslint: {
 			options: {
-				configuration: grunt.file.readJSON("tslint.json")
 			},
-			files: {
-				src: [
-					'<%= opt.client.tsMain %>/**/*.ts',
-					'<%= opt.client.tsTest %>/**/*.ts',
-					'!<%= opt.client.tsMain %>/**/*.d.ts'
-				]
-			}
+			target: [
+				'lib/**/*.ts',
+				'!lib/**/*.d.ts',
+				'test/**/*.ts',
+				'!test/**/*.d.ts'
+			]
 		},
 		browserify: {
 			main: {
@@ -137,7 +135,7 @@ module.exports = function (grunt) {
 
 	grunt.registerTask(
 		'default',
-		['clean:clientScript', 'shell:tsc', 'tslint', 'shell:pegjs', 'browserify:main', 'uglify:browser']);
+		['clean:clientScript', 'shell:tsc', 'eslint', 'shell:pegjs', 'browserify:main', 'uglify:browser']);
 
 	grunt.registerTask(
 		'test-preprocess',
