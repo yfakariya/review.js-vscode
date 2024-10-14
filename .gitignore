@@ -25,3 +25,5 @@ benchmark/base*.js
 bin/out/
 tscommand.tmp.txt
 .baseDir.ts
+
+!test/scriptHelpers/**/*.js
