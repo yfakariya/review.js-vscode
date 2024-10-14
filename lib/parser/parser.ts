@@ -673,6 +673,7 @@ export class ChapterSyntaxTree extends NodeSyntaxTree {
             return transform(data)!;
         });
 
+        // @ts-ignore 2790
         delete this.childNodes; // JSON化した時の属性順制御のため…
         this.childNodes = [];
     }
@@ -750,6 +751,7 @@ export class ColumnSyntaxTree extends NodeSyntaxTree {
             return transform(data)!;
         });
 
+        // @ts-ignore 2790
         delete this.childNodes; // JSON化した時の属性順制御のため…
         this.childNodes = [];
     }
@@ -807,6 +809,7 @@ export class UlistElementSyntaxTree extends NodeSyntaxTree {
         this.level = this.checkNumber(data.level);
         this.text = transform(this.checkObject(data.text))!;
 
+        // @ts-ignore 2790
         delete this.childNodes; // JSON化した時の属性順制御のため…
         this.childNodes = [];
     }

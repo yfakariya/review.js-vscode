@@ -1,10 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as jsyaml from "js-yaml";
-import * as updateNotifier from "update-notifier";
+import updateNotifier from "update-notifier";
 
 import { start } from "./index";
-import { ConfigRaw } from "./controller/configRaw";
+import { ConfigBook, ConfigRaw } from "./controller/configRaw";
 import { ReportLevel } from "./model/compilerModel";
 import { Exec, target2builder } from "./utils/utils";
 
@@ -160,19 +160,19 @@ root
         }
 
         function byConfigYaml() {
-            let catalogYaml = jsyaml.safeLoad(fs.readFileSync(path.resolve(process.cwd(), "catalog.yml"), "utf8"));
+            let catalogYaml = <ConfigBook>jsyaml.load(fs.readFileSync(path.resolve(process.cwd(), "catalog.yml"), "utf8"));
 
             let configRaw: ConfigRaw = {
-                builders: [target2builder(target) !],
+                builders: [target2builder(target)!],
                 book: catalogYaml
             };
 
             return start(review => {
                 review.initConfig(configRaw);
             }, {
-                    reviewfile: reviewfile,
-                    base: root.parsedOpts.base[0]
-                })
+                reviewfile: reviewfile,
+                base: root.parsedOpts.base[0]
+            })
                 .then(book => {
                     process.stdout.write("completed!\n");
                     book.reports.forEach(report => {

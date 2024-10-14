@@ -588,12 +588,12 @@ export class TextBuilder extends DefaultBuilder {
         let hexString = nodeContentToString(process, node);
         let code = parseInt(hexString, 16);
         let result = "";
-        /* tslint:disable:no-bitwise */
+        /* eslint-disable no-bitwise*/
         while (code !== 0) {
             result = String.fromCharCode(code & 0xFFFF) + result;
             code >>>= 16;
         }
-        /* tslint:enable:no-bitwise */
+        /* eslint-enable no-bitwise */
         process.out(result);
         return false;
     }

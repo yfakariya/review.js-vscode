@@ -244,14 +244,14 @@ export function target2builder(target: string): Builder | null {
     if (builderName === "HtmlBuilder") {
         return new HtmlBuilder();
     }
-	/*
-	for (let name in ReVIEW.Build) {
-		if (name === builderName) {
-			let ctor = (<any>ReVIEW.Build)[name];
-			return new ctor();
-		}
-	}
-	 */
+    /*
+    for (let name in ReVIEW.Build) {
+        if (name === builderName) {
+            let ctor = (<any>ReVIEW.Build)[name];
+            return new ctor();
+        }
+
+     */
     return null;
 }
 
@@ -261,11 +261,11 @@ export function target2builder(target: string): Builder | null {
 export module IO {
     "use strict";
 
-	/**
-	 * 指定されたファイルを読み文字列として返す。
-	 * @param path
-	 * @returns {*}
-	 */
+    /**
+     * 指定されたファイルを読み文字列として返す。
+     * @param path
+     * @returns {*}
+     */
     export function read(path: string): Promise<string> {
         /* tslint:disable:no-require-imports */
         let fs = require("fs");
@@ -281,11 +281,11 @@ export module IO {
         });
     }
 
-	/**
-	 * 指定されたファイルへ文字列を書く。
-	 * @param path
-	 * @param content
-	 */
+    /**
+     * 指定されたファイルへ文字列を書く。
+     * @param path
+     * @param content
+     */
     export function write(path: string, content: string): Promise<null> {
         /* tslint:disable:no-require-imports */
         let fs = require("fs");

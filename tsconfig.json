@@ -10,6 +10,7 @@
             "node",
             "mocha"
         ],
+        "esModuleInterop": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
