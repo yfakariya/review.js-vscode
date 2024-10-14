@@ -103,7 +103,7 @@ var DefaultBuilder = /** @class */ (function () {
     DefaultBuilder.prototype.processAst = function (chunk) {
         var _this = this;
         var process = chunk.createBuilderProcess(this);
-        return walker_1.visitAsync(chunk.tree.ast, this.getDefaultVisitorArg(process))
+        return (0, walker_1.visitAsync)(chunk.tree.ast, this.getDefaultVisitorArg(process))
             .then(function () {
             _this.processPost(process, chunk);
             return Promise.all(chunk.nodes.map(function (chunk) { return _this.processAst(chunk); })).then(function () { return null; });
@@ -114,7 +114,7 @@ var DefaultBuilder = /** @class */ (function () {
     };
     DefaultBuilder.prototype.getChapterTitle = function (process, chapter) {
         var chapterNode = null;
-        walker_1.visit(chapter.tree.ast, {
+        (0, walker_1.visit)(chapter.tree.ast, {
             visitDefaultPre: function (_node, _parent) {
                 return !chapterNode;
             },
@@ -126,7 +126,7 @@ var DefaultBuilder = /** @class */ (function () {
         if (!chapterNode) {
             return null;
         }
-        return utils_1.nodeContentToString(process, chapterNode.headline);
+        return (0, utils_1.nodeContentToString)(process, chapterNode.headline);
     };
     DefaultBuilder.prototype.processPost = function (_process, _chunk) {
     };
@@ -168,56 +168,56 @@ var DefaultBuilder = /** @class */ (function () {
     };
     DefaultBuilder.prototype.blockPre = function (process, name, node) {
         var func;
-        func = this["block_" + name];
+        func = this["block_".concat(name)];
         if (typeof func === "function") {
             return func.call(this, process, node);
         }
-        func = this["block_" + name + "_pre"];
+        func = this["block_".concat(name, "_pre")];
         if (typeof func !== "function") {
-            throw new exception_1.AnalyzerError("block_" + name + "_pre or block_" + name + " is not Function");
+            throw new exception_1.AnalyzerError("block_".concat(name, "_pre or block_").concat(name, " is not Function"));
         }
         return func.call(this, process, node);
     };
     DefaultBuilder.prototype.blockPost = function (process, name, node) {
         var func;
-        func = this["block_" + name];
+        func = this["block_".concat(name)];
         if (typeof func === "function") {
             return;
         }
-        func = this["block_" + name + "_post"];
+        func = this["block_".concat(name, "_post")];
         if (typeof func !== "function") {
-            throw new exception_1.AnalyzerError("block_" + name + "_post is not Function");
+            throw new exception_1.AnalyzerError("block_".concat(name, "_post is not Function"));
         }
         return func.call(this, process, node);
     };
     DefaultBuilder.prototype.inlinePre = function (process, name, node) {
         var func;
-        func = this["inline_" + name];
+        func = this["inline_".concat(name)];
         if (typeof func === "function") {
             return func.call(this, process, node);
         }
-        func = this["inline_" + name + "_pre"];
+        func = this["inline_".concat(name, "_pre")];
         if (typeof func !== "function") {
-            throw new exception_1.AnalyzerError("inline_" + name + "_pre or inline_" + name + " is not Function");
+            throw new exception_1.AnalyzerError("inline_".concat(name, "_pre or inline_").concat(name, " is not Function"));
         }
         return func.call(this, process, node);
     };
     DefaultBuilder.prototype.inlinePost = function (process, name, node) {
         var func;
-        func = this["inline_" + name];
+        func = this["inline_".concat(name)];
         if (typeof func === "function") {
             return;
         }
-        func = this["inline_" + name + "_post"];
+        func = this["inline_".concat(name, "_post")];
         if (typeof func !== "function") {
-            throw new exception_1.AnalyzerError("inline_" + name + "_post is not Function");
+            throw new exception_1.AnalyzerError("inline_".concat(name, "_post is not Function"));
         }
         return func.call(this, process, node);
     };
     DefaultBuilder.prototype.ulistParentHelper = function (process, node, action, currentLevel) {
         if (currentLevel === void 0) { currentLevel = node.level; }
         if (currentLevel !== 1) {
-            var result = utils_1.findUp(node.parentNode, function (n) {
+            var result = (0, utils_1.findUp)(node.parentNode, function (n) {
                 if (n instanceof parser_1.UlistElementSyntaxTree) {
                     return n.level === (currentLevel - 1);
                 }
@@ -242,7 +242,7 @@ var DefaultBuilder = /** @class */ (function () {
         process.out("「");
         var chapter = (_b = (_a = this.findReference(process, node).referenceTo) === null || _a === void 0 ? void 0 : _a.referenceNode) === null || _b === void 0 ? void 0 : _b.parentNode.toChapter();
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
         if (chapter.level === 1) {
@@ -252,7 +252,7 @@ var DefaultBuilder = /** @class */ (function () {
             process.out(chapter.fqn).out(" ");
         }
         // 再帰的に呼び出す（ラベルを使用した参照の場合、キャプションはインライン要素を含む可能性がある）
-        walker_1.visit(chapter.headline.caption, this.getDefaultVisitorArg(process));
+        (0, walker_1.visit)(chapter.headline.caption, this.getDefaultVisitorArg(process));
         return false;
     };
     DefaultBuilder.prototype.inline_hd_post = function (process, _node) {
@@ -261,10 +261,10 @@ var DefaultBuilder = /** @class */ (function () {
     DefaultBuilder.prototype.block_raw = function (process, node) {
         var _this = this;
         // TODO Ruby版との出力差が結構あるのでテスト含め直す
-        var content = utils_1.nodeContentToString(process, node.args[0]);
+        var content = (0, utils_1.nodeContentToString)(process, node.args[0]);
         var matches = content.match(/\|(.+)\|/);
         if (matches && matches[1]) {
-            var target = matches[1].split(",").some(function (name) { return _this.name.toLowerCase() === name + "builder"; });
+            var target = matches[1].split(",").some(function (name) { return _this.name.toLowerCase() === "".concat(name, "builder"); });
             if (target) {
                 // "|hoge,fuga| piyo" の場合 matches[1] === "hoge,fuga"
                 process.outRaw(content.substring(matches[0].length));
@@ -277,10 +277,10 @@ var DefaultBuilder = /** @class */ (function () {
     };
     DefaultBuilder.prototype.inline_raw = function (process, node) {
         var _this = this;
-        var content = utils_1.nodeContentToString(process, node);
+        var content = (0, utils_1.nodeContentToString)(process, node);
         var matches = content.match(/\|(.+)\|/);
         if (matches && matches[1]) {
-            var target = matches[1].split(",").some(function (name) { return _this.name.toLowerCase() === name + "builder"; });
+            var target = matches[1].split(",").some(function (name) { return _this.name.toLowerCase() === "".concat(name, "builder"); });
             if (target) {
                 // "|hoge,fuga| piyo" の場合 matches[1] === "hoge,fuga"
                 process.outRaw(content.substring(matches[0].length));
@@ -476,10 +476,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -509,7 +511,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
     }
     HtmlBuilder.prototype.escape = function (data) {
         var _this = this;
-        var regexp = new RegExp("[" + Object.keys(this.escapeMap).join("") + "]", "g");
+        var regexp = new RegExp("[".concat(Object.keys(this.escapeMap).join(""), "]"), "g");
         return String(data).replace(regexp, function (c) { return _this.escapeMap[c]; });
     };
     HtmlBuilder.prototype.normalizeId = function (label) {
@@ -517,10 +519,10 @@ var HtmlBuilder = /** @class */ (function (_super) {
             return label;
         }
         else if (label.match(/^[0-9_.-][a-z0-9_.-]*$/i)) {
-            return "id_" + label;
+            return "id_".concat(label);
         }
         else {
-            return "id_" + encodeURIComponent(label.replace(/_/g, "__").replace(/ /g, "-")).replace(/%/g, "_").replace(/\+/g, "-");
+            return "id_".concat(encodeURIComponent(label.replace(/_/g, "__").replace(/ /g, "-")).replace(/%/g, "_").replace(/\+/g, "-"));
         }
     };
     HtmlBuilder.prototype.processPost = function (process, chunk) {
@@ -534,12 +536,12 @@ var HtmlBuilder = /** @class */ (function (_super) {
             pre += "  <link rel=\"stylesheet\" type=\"text/css\" href=\"stylesheet.css\" />" + "\n";
             pre += "  <meta name=\"generator\" content=\"Re:VIEW\" />" + "\n";
             var name_1 = null;
-            walker_1.visit(chunk.tree.ast, {
+            (0, walker_1.visit)(chunk.tree.ast, {
                 visitDefaultPre: function () {
                 },
                 visitChapterPre: function (node) {
                     if (node.headline.level === 1) {
-                        name_1 = utils_1.nodeContentToString(process, node.headline.caption, /* textOnly */ true);
+                        name_1 = (0, utils_1.nodeContentToString)(process, node.headline.caption, /* textOnly */ true);
                     }
                 }
             });
@@ -557,15 +559,15 @@ var HtmlBuilder = /** @class */ (function (_super) {
             process.outRaw(" id=\"").out(this.normalizeId(node.label.arg)).outRaw("\"");
         }
         process.outRaw(">");
-        process.outRaw("<a id=\"h").out(utils_1.getHeadlineLevels(node).join("-")).outRaw("\"></a>");
+        process.outRaw("<a id=\"h").out((0, utils_1.getHeadlineLevels)(node).join("-")).outRaw("\"></a>");
         if (node.level === 1) {
-            var text = i18n_1.t("builder.chapter", node.parentNode.no);
+            var text = (0, i18n_1.t)("builder.chapter", node.parentNode.no);
             process.outRaw("<span class=\"secno\">");
             process.out(text).out("　");
             process.outRaw("</span>");
         }
         else if (node.level < 4) {
-            process.out(utils_1.getHeadlineLevels(node).join(".")).out("　");
+            process.out((0, utils_1.getHeadlineLevels)(node).join(".")).out("　");
         }
     };
     HtmlBuilder.prototype.headlinePost = function (process, _name, node) {
@@ -585,7 +587,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw(">");
         process.outRaw("<a id=\"column-").out(node.parentNode.no).outRaw("\"></a>");
         return function (v) {
-            walker_1.visit(node.caption, v);
+            (0, walker_1.visit)(node.caption, v);
         };
     };
     HtmlBuilder.prototype.columnHeadlinePost = function (process, node) {
@@ -639,10 +641,10 @@ var HtmlBuilder = /** @class */ (function (_super) {
         }
         return function (v) {
             process.outRaw("<dt>");
-            walker_1.visit(node.text, v);
+            (0, walker_1.visit)(node.text, v);
             process.outRaw("</dt>\n");
             process.outRaw("<dd>");
-            walker_1.visit(node.content, v);
+            (0, walker_1.visit)(node.content, v);
             process.outRaw("</dd>\n");
         };
     };
@@ -653,22 +655,22 @@ var HtmlBuilder = /** @class */ (function (_super) {
     };
     HtmlBuilder.prototype.block_list_pre = function (process, node) {
         process.outRaw("<div class=\"caption-code\">\n");
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
-        var text = i18n_1.t("builder.list", chapter.fqn, node.no);
+        var text = (0, i18n_1.t)("builder.list", chapter.fqn, node.no);
         process.outRaw("<p class=\"caption\">").out(text).outRaw(": ");
         return function (v) {
             // name はパスしたい, langもパスしたい
-            walker_1.visit(node.args[1], v);
+            (0, walker_1.visit)(node.args[1], v);
             process.outRaw("</p>\n");
             process.outRaw("<pre class=\"list\">");
             var nodeCount = node.childNodes.length;
             var nodeIndex = 0;
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
                 // <pre>の中では入力の改行が保持されるべきだが、ASTのパースで消えてしまうため補完。
                 // なお、\rは保持されるので、元ファイルの改行コードが\r\nの場合の考慮は不要。
                 nodeIndex++;
@@ -683,17 +685,17 @@ var HtmlBuilder = /** @class */ (function (_super) {
     };
     HtmlBuilder.prototype.block_listnum_pre = function (process, node) {
         process.outRaw("<div class=\"code\">\n");
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
-        var text = i18n_1.t("builder.list", chapter.fqn, node.no);
+        var text = (0, i18n_1.t)("builder.list", chapter.fqn, node.no);
         process.outRaw("<p class=\"caption\">").out(text).out(": ");
         var lineCount = 1;
         return function (v) {
             // name はパスしたい, langもパスしたい
-            walker_1.visit(node.args[1], v);
+            (0, walker_1.visit)(node.args[1], v);
             process.outRaw("</p>\n");
             process.outRaw("<pre class=\"list\">");
             var lineCountMax = 0;
@@ -702,7 +704,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     lineCountMax += node.toTextNode().text.split("\n").length;
                 }
             });
-            var lineDigit = Math.max(utils_1.linesToFigure(lineCountMax), 2);
+            var lineDigit = Math.max((0, utils_1.linesToFigure)(lineCountMax), 2);
             var nodeCount = node.childNodes.length;
             var nodeIndex = 0;
             node.childNodes.forEach(function (node, index, childNodes) {
@@ -712,7 +714,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     var textNode = node.toTextNode();
                     var lines_1 = textNode.text.split("\n");
                     lines_1.forEach(function (line, index) {
-                        process.out(utils_1.padLeft(String(lineCount), " ", lineDigit)).out(": ");
+                        process.out((0, utils_1.padLeft)(String(lineCount), " ", lineDigit)).out(": ");
                         process.out(line);
                         if (!hasNext_1 || lines_1.length - 1 !== index) {
                             lineCount++;
@@ -723,7 +725,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     });
                 }
                 else {
-                    walker_1.visit(node, v);
+                    (0, walker_1.visit)(node, v);
                 }
                 // <pre>の中では入力の改行が保持されるべきだが、ASTのパースで消えてしまうため補完。
                 // なお、\rは保持されるので、元ファイルの改行コードが\r\nの場合の考慮は不要。
@@ -739,13 +741,13 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw("\n</pre>\n").outRaw("</div>\n");
     };
     HtmlBuilder.prototype.inline_list = function (process, node) {
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
         var listNode = this.findReference(process, node).referenceTo.referenceNode.toBlockElement();
-        var text = i18n_1.t("builder.list", chapter.fqn, listNode.no);
+        var text = (0, i18n_1.t)("builder.list", chapter.fqn, listNode.no);
         process.out(text);
         return false;
     };
@@ -755,14 +757,14 @@ var HtmlBuilder = /** @class */ (function (_super) {
             // name はパスしたい
             if (node.args[0]) {
                 process.outRaw("<p class=\"caption\">");
-                walker_1.visit(node.args[0], v);
+                (0, walker_1.visit)(node.args[0], v);
                 process.outRaw("</p>\n");
             }
             process.outRaw("<pre class=\"emlist\">");
             var nodeCount = node.childNodes.length;
             var nodeIndex = 0;
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
                 // <pre>の中では入力の改行が保持されるべきだが、ASTのパースで消えてしまうため補完。
                 // なお、\rは保持されるので、元ファイルの改行コードが\r\nの場合の考慮は不要。
                 nodeIndex++;
@@ -787,7 +789,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     lineCountMax += node.toTextNode().text.split("\n").length;
                 }
             });
-            var lineDigit = Math.max(utils_1.linesToFigure(lineCountMax), 2);
+            var lineDigit = Math.max((0, utils_1.linesToFigure)(lineCountMax), 2);
             var nodeCount = node.childNodes.length;
             var nodeIndex = 0;
             node.childNodes.forEach(function (node, index, childNodes) {
@@ -797,7 +799,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     var textNode = node.toTextNode();
                     var lines_2 = textNode.text.split("\n");
                     lines_2.forEach(function (line, index) {
-                        process.out(utils_1.padLeft(String(lineCount), " ", lineDigit)).out(": ");
+                        process.out((0, utils_1.padLeft)(String(lineCount), " ", lineDigit)).out(": ");
                         process.out(line);
                         if (!hasNext_2 || lines_2.length - 1 !== index) {
                             lineCount++;
@@ -808,7 +810,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     });
                 }
                 else {
-                    walker_1.visit(node, v);
+                    (0, walker_1.visit)(node, v);
                 }
                 // <pre>の中では入力の改行が保持されるべきだが、ASTのパースで消えてしまうため補完。
                 // なお、\rは保持されるので、元ファイルの改行コードが\r\nの場合の考慮は不要。
@@ -839,7 +841,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw("</code>");
     };
     HtmlBuilder.prototype.inline_href = function (process, node) {
-        var href = utils_1.nodeContentToString(process, node);
+        var href = (0, utils_1.nodeContentToString)(process, node);
         var text = href;
         if (href.indexOf(",") !== -1) {
             text = href.slice(href.indexOf(",") + 1).trimLeft();
@@ -850,7 +852,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
     };
     HtmlBuilder.prototype.block_label = function (process, node) {
         process.outRaw("<a id=\"");
-        process.out(utils_1.nodeContentToString(process, node.args[0]));
+        process.out((0, utils_1.nodeContentToString)(process, node.args[0]));
         process.outRaw("\"></a>\n");
         return false;
     };
@@ -865,7 +867,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
         return function (_v) {
             // name, args はパス
             node.childNodes.forEach(function (node) {
-                var contentString = utils_1.nodeContentToString(process, node);
+                var contentString = (0, utils_1.nodeContentToString)(process, node);
                 var keywordData = contentString.split(",");
                 process.out(keywordData[0]);
                 process.outRaw("<rp>（</rp>");
@@ -888,19 +890,19 @@ var HtmlBuilder = /** @class */ (function (_super) {
         return function (_v) {
             // name, args はパス
             node.childNodes.forEach(function (node) {
-                var contentString = utils_1.nodeContentToString(process, node);
+                var contentString = (0, utils_1.nodeContentToString)(process, node);
                 var keywordData = contentString.split(",");
                 var pre = keywordData[0];
                 var post = (keywordData[1] || "").trimLeft();
-                process.out("" + pre);
+                process.out("".concat(pre));
                 if (post) {
-                    process.out(" (" + post + ")");
+                    process.out(" (".concat(post, ")"));
                 }
             });
         };
     };
     HtmlBuilder.prototype.inline_kw_post = function (process, node) {
-        var contentString = utils_1.nodeContentToString(process, node);
+        var contentString = (0, utils_1.nodeContentToString)(process, node);
         var keywordData = contentString.split(",");
         var pre = keywordData[0];
         process.outRaw("</b>").outRaw("<!-- IDX:").out(pre).outRaw(" -->");
@@ -912,15 +914,15 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw("</em>");
     };
     HtmlBuilder.prototype.block_image = function (process, node) {
-        var label = utils_1.nodeContentToString(process, node.args[0]);
+        var label = (0, utils_1.nodeContentToString)(process, node.args[0]);
         return process.findImageFile(label)
             .then(function (imagePath) {
-            var caption = utils_1.nodeContentToString(process, node.args[1]); // TODO vistでinlineの処理をきっちりするべき
+            var caption = (0, utils_1.nodeContentToString)(process, node.args[1]); // TODO vistでinlineの処理をきっちりするべき
             var scale = 1;
             if (node.args[2]) {
                 // let arg3 = node.args[2].arg;
                 var regexp = new RegExp("scale=(\\d+(?:\\.\\d+))");
-                var result = regexp.exec(utils_1.nodeContentToString(process, node.args[2]));
+                var result = regexp.exec((0, utils_1.nodeContentToString)(process, node.args[2]));
                 if (result) {
                     scale = parseFloat(result[1]);
                 }
@@ -928,13 +930,13 @@ var HtmlBuilder = /** @class */ (function (_super) {
             process.outRaw("<div id=\"").out(label).outRaw("\" class=\"image\">" + "\n");
             // imagePathは変数作成時点でユーザ入力部分をescapeしている
             if (scale !== 1) {
-                var scaleClass = "000" + scale * 100;
+                var scaleClass = "000".concat(scale * 100);
                 scaleClass = scaleClass.substr(scaleClass.length - 3);
                 // TODO 各class設定にあわせたcssを同梱しないと…
-                process.outRaw("<img src=\"" + imagePath + "\" alt=\"").out(caption).outRaw("\" class=\"width-").out(scaleClass).outRaw("per\" />\n");
+                process.outRaw("<img src=\"".concat(imagePath, "\" alt=\"")).out(caption).outRaw("\" class=\"width-").out(scaleClass).outRaw("per\" />\n");
             }
             else {
-                process.outRaw("<img src=\"" + imagePath + "\" alt=\"").out(caption).outRaw("\" />" + "\n");
+                process.outRaw("<img src=\"".concat(imagePath, "\" alt=\"")).out(caption).outRaw("\" />" + "\n");
             }
             process.outRaw("<p class=\"caption\">\n");
             process.out("図").out(process.base.chapter.no).out(".").out(node.no).out(": ").out(caption);
@@ -943,23 +945,23 @@ var HtmlBuilder = /** @class */ (function (_super) {
             return false;
         })
             .catch(function (id) {
-            process.error(i18n_1.t("builder.image_not_found", id), node);
+            process.error((0, i18n_1.t)("builder.image_not_found", id), node);
             return false;
         });
     };
     HtmlBuilder.prototype.block_indepimage = function (process, node) {
-        var label = utils_1.nodeContentToString(process, node.args[0]);
+        var label = (0, utils_1.nodeContentToString)(process, node.args[0]);
         return process.findImageFile(label)
             .then(function (imagePath) {
             var caption = "";
             if (node.args[1]) {
-                caption = utils_1.nodeContentToString(process, node.args[1]);
+                caption = (0, utils_1.nodeContentToString)(process, node.args[1]);
             }
             var scale = 1;
             if (node.args[2]) {
                 // let arg3 = node.args[2].arg;
                 var regexp = new RegExp("scale=(\\d+(?:\\.\\d+))");
-                var result = regexp.exec(utils_1.nodeContentToString(process, node.args[2]));
+                var result = regexp.exec((0, utils_1.nodeContentToString)(process, node.args[2]));
                 if (result) {
                     scale = parseFloat(result[1]);
                 }
@@ -967,13 +969,13 @@ var HtmlBuilder = /** @class */ (function (_super) {
             process.outRaw("<div class=\"image\">\n");
             // imagePathは変数作成時点でユーザ入力部分をescapeしている
             if (scale !== 1) {
-                var scaleClass = "000" + scale * 100;
+                var scaleClass = "000".concat(scale * 100);
                 scaleClass = scaleClass.substr(scaleClass.length - 3);
                 // TODO 各class設定にあわせたcssを同梱しないと…
-                process.outRaw("<img src=\"" + imagePath + "\" alt=\"").out(caption).outRaw("\" class=\"width-").out(scaleClass).outRaw("per\" />\n");
+                process.outRaw("<img src=\"".concat(imagePath, "\" alt=\"")).out(caption).outRaw("\" class=\"width-").out(scaleClass).outRaw("per\" />\n");
             }
             else {
-                process.outRaw("<img src=\"" + imagePath + "\" alt=\"").out(caption).outRaw("\" />" + "\n");
+                process.outRaw("<img src=\"".concat(imagePath, "\" alt=\"")).out(caption).outRaw("\" />" + "\n");
             }
             if (node.args[1]) {
                 process.outRaw("<p class=\"caption\">\n");
@@ -987,13 +989,13 @@ var HtmlBuilder = /** @class */ (function (_super) {
     HtmlBuilder.prototype.block_graph_pre = function (process, node) {
         // TODO 以下はとりあえず正規のRe:VIEW文書が食えるようにするための仮実装
         process.outRaw("<div>\n");
-        var toolName = utils_1.nodeContentToString(process, node.args[1]);
+        var toolName = (0, utils_1.nodeContentToString)(process, node.args[1]);
         process.outRaw("<p>graph: ").out(toolName).outRaw("</p>\n");
         process.outRaw("<pre>");
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1010,23 +1012,23 @@ var HtmlBuilder = /** @class */ (function (_super) {
         // TODO ファイル名探索ロジックをもっと頑張る(jpgとかsvgとか)
         var chapterFileName = process.base.chapter.name;
         var chapterName = chapterFileName.substring(0, chapterFileName.length - 3);
-        var imageName = utils_1.nodeContentToString(process, node);
+        var imageName = (0, utils_1.nodeContentToString)(process, node);
         var imagePath = "images/" + this.escape(chapterName) + "-" + this.escape(imageName) + ".png";
         process.outRaw("<img src=\"" + imagePath + "\" alt=\"[").out(imageName).outRaw("]\" />");
         return false;
     };
     HtmlBuilder.prototype.block_footnote = function (process, node) {
-        var label = utils_1.nodeContentToString(process, node.args[0]);
+        var label = (0, utils_1.nodeContentToString)(process, node.args[0]);
         process.outRaw("<div class=\"footnote\" epub:type=\"footnote\" id=\"fn-").outRaw(label).outRaw("\"><p class=\"footnote\">");
         process.outRaw("[*").out(node.no).outRaw("] ");
         return function (v) {
-            walker_1.visit(node.args[1], v);
+            (0, walker_1.visit)(node.args[1], v);
             process.outRaw("</p></div>\n");
         };
     };
     HtmlBuilder.prototype.inline_fn = function (process, node) {
         var footnoteNode = this.findReference(process, node).referenceTo.referenceNode.toBlockElement();
-        var label = utils_1.nodeContentToString(process, footnoteNode.args[0]);
+        var label = (0, utils_1.nodeContentToString)(process, footnoteNode.args[0]);
         process.outRaw("<a id=\"fnb-").out(label).outRaw("\" href=\"#fn-").out(label).outRaw("\" class=\"noteref\" epub:type=\"noteref\">*").out(footnoteNode.no).outRaw("</a>");
         return false;
     };
@@ -1058,12 +1060,12 @@ var HtmlBuilder = /** @class */ (function (_super) {
     };
     HtmlBuilder.prototype.block_source_pre = function (process, node) {
         process.outRaw("<div class=\"source-code\">\n");
-        process.outRaw("<p class=\"caption\">").out(utils_1.nodeContentToString(process, node.args[0])).outRaw("</p>\n");
+        process.outRaw("<p class=\"caption\">").out((0, utils_1.nodeContentToString)(process, node.args[0])).outRaw("</p>\n");
         process.outRaw("<pre class=\"source\">");
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1076,7 +1078,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1088,7 +1090,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1152,19 +1154,19 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw(";");
     };
     HtmlBuilder.prototype.block_table_pre = function (process, node) {
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
-        var text = i18n_1.t("builder.table", chapter.fqn, node.no);
+        var text = (0, i18n_1.t)("builder.table", chapter.fqn, node.no);
         process.outRaw("<div");
         if (node.args[0] != null) {
             // BracketArgs -> BracketArgSubs -> BracketArgText
             process.outRaw(" id=\"").out(this.normalizeId(node.args[0].childNodes[0].toNode().childNodes[0].toTextNode().text)).outRaw("\"");
         }
         process.outRaw(" class=\"table\">\n");
-        process.outRaw("<p class=\"caption\">").out(text).out(": ").out(utils_1.nodeContentToString(process, node.args[1])).outRaw("</p>\n");
+        process.outRaw("<p class=\"caption\">").out(text).out(": ").out((0, utils_1.nodeContentToString)(process, node.args[1])).outRaw("</p>\n");
         process.outRaw("<table>\n");
         var table = this.parseTable(node.childNodes);
         return function (v) {
@@ -1178,14 +1180,14 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     // ヘッダー列
                     process.outRaw("<th>");
                     columns[0].nodes.forEach(function (node) {
-                        walker_1.visit(node, v);
+                        (0, walker_1.visit)(node, v);
                     });
                     process.outRaw("</th>");
                     // 残りの列
                     for (var c = 1; c < columns.length; c++) {
                         process.outRaw("<td>");
                         columns[c].nodes.forEach(function (node) {
-                            walker_1.visit(node, v);
+                            (0, walker_1.visit)(node, v);
                         });
                         process.outRaw("</td>");
                     }
@@ -1200,7 +1202,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     table.cells[r].forEach(function (columns) {
                         process.outRaw("<th>");
                         columns.nodes.forEach(function (node) {
-                            walker_1.visit(node, v);
+                            (0, walker_1.visit)(node, v);
                         });
                         process.outRaw("</th>");
                     });
@@ -1212,7 +1214,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
                     table.cells[r].forEach(function (columns) {
                         process.outRaw("<td>");
                         columns.nodes.forEach(function (node) {
-                            walker_1.visit(node, v);
+                            (0, walker_1.visit)(node, v);
                         });
                         process.outRaw("</td>");
                     });
@@ -1225,13 +1227,13 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw("</table>\n").outRaw("</div>\n");
     };
     HtmlBuilder.prototype.inline_table = function (process, node) {
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
         var listNode = this.findReference(process, node).referenceTo.referenceNode.toBlockElement();
-        var text = i18n_1.t("builder.table", chapter.fqn, listNode.no);
+        var text = (0, i18n_1.t)("builder.table", chapter.fqn, listNode.no);
         process.outRaw("<span class=\"tableref\">").out(text).outRaw("</span>");
         return false;
     };
@@ -1248,7 +1250,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1273,32 +1275,32 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw("</span>");
     };
     HtmlBuilder.prototype.inline_chap = function (process, node) {
-        var chapName = utils_1.nodeContentToString(process, node);
+        var chapName = (0, utils_1.nodeContentToString)(process, node);
         var chapter = process.findChapter(chapName);
-        process.out(i18n_1.t("builder.chapter", chapter.no));
+        process.out((0, i18n_1.t)("builder.chapter", chapter.no));
         return false;
     };
     HtmlBuilder.prototype.inline_title = function (process, node) {
-        var chapName = utils_1.nodeContentToString(process, node);
+        var chapName = (0, utils_1.nodeContentToString)(process, node);
         var chapter = process.findChapter(chapName);
         var title = this.getChapterTitle(process, chapter);
         process.out(title);
         return false;
     };
     HtmlBuilder.prototype.inline_chapref = function (process, node) {
-        var chapName = utils_1.nodeContentToString(process, node);
+        var chapName = (0, utils_1.nodeContentToString)(process, node);
         var chapter = process.findChapter(chapName);
         var title = this.getChapterTitle(process, chapter);
-        process.out(i18n_1.t("builder.chapter_ref", chapter.no, title));
+        process.out((0, i18n_1.t)("builder.chapter_ref", chapter.no, title));
         return false;
     };
     HtmlBuilder.prototype.inline_idx = function (process, node) {
-        var text = utils_1.nodeContentToString(process, node);
+        var text = (0, utils_1.nodeContentToString)(process, node);
         process.out(text).outRaw("<!-- IDX:").out(text).outRaw(" -->");
         return false;
     };
     HtmlBuilder.prototype.inline_hidx = function (process, node) {
-        var text = utils_1.nodeContentToString(process, node);
+        var text = (0, utils_1.nodeContentToString)(process, node);
         process.outRaw("<!-- IDX:").out(text).outRaw(" -->");
         return false;
     };
@@ -1307,7 +1309,7 @@ var HtmlBuilder = /** @class */ (function (_super) {
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1315,9 +1317,9 @@ var HtmlBuilder = /** @class */ (function (_super) {
         process.outRaw("</p>\n");
     };
     HtmlBuilder.prototype.block_captionblock_pre = function (typename, process, node) {
-        process.outRaw("<div class=\"" + typename + "\">\n");
+        process.outRaw("<div class=\"".concat(typename, "\">\n"));
         if (node.args[0]) {
-            var label = utils_1.nodeContentToString(process, node.args[0]);
+            var label = (0, utils_1.nodeContentToString)(process, node.args[0]);
             process.outRaw("<p class=\"caption\">").out(label).outRaw("</p>\n");
         }
     };
@@ -1382,10 +1384,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1411,11 +1415,11 @@ var TextBuilder = /** @class */ (function (_super) {
     TextBuilder.prototype.headlinePre = function (process, _name, node) {
         process.out("■H").out(node.level).out("■");
         if (node.level === 1) {
-            var text = i18n_1.t("builder.chapter", node.parentNode.no);
+            var text = (0, i18n_1.t)("builder.chapter", node.parentNode.no);
             process.out(text).out("　");
         }
         else if (node.level < 4) {
-            process.out(utils_1.getHeadlineLevels(node).join(".")).out("　");
+            process.out((0, utils_1.getHeadlineLevels)(node).join(".")).out("　");
         }
     };
     TextBuilder.prototype.headlinePost = function (process, _name, _node) {
@@ -1425,7 +1429,7 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("\n◆→開始:コラム←◆\n");
         process.out("■");
         return function (v) {
-            walker_1.visit(node.caption, v);
+            (0, walker_1.visit)(node.caption, v);
         };
     };
     TextBuilder.prototype.columnHeadlinePost = function (process, _node) {
@@ -1461,10 +1465,10 @@ var TextBuilder = /** @class */ (function (_super) {
     TextBuilder.prototype.dlistPre = function (process, _name, node) {
         return function (v) {
             process.out("★");
-            walker_1.visit(node.text, v);
+            (0, walker_1.visit)(node.text, v);
             process.out("☆\n");
             process.out("\t");
-            walker_1.visit(node.content, v);
+            (0, walker_1.visit)(node.content, v);
             process.out("\n");
         };
     };
@@ -1473,21 +1477,21 @@ var TextBuilder = /** @class */ (function (_super) {
     };
     TextBuilder.prototype.block_list_pre = function (process, node) {
         process.out("◆→開始:リスト←◆\n");
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
-        var text = i18n_1.t("builder.list", chapter.fqn, node.no);
+        var text = (0, i18n_1.t)("builder.list", chapter.fqn, node.no);
         process.out(text).out("　");
         return function (v) {
             // name はパスしたい, langもパスしたい
-            walker_1.visit(node.args[1], v);
+            (0, walker_1.visit)(node.args[1], v);
             process.outRaw("\n\n");
             var nodeCount = node.childNodes.length;
             var nodeIndex = 0;
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
                 // 入力の改行が保持されるべきだが、ASTのパースで消えてしまうため補完。
                 // なお、\rは保持されるので、元ファイルの改行コードが\r\nの場合の考慮は不要。
                 nodeIndex++;
@@ -1502,24 +1506,24 @@ var TextBuilder = /** @class */ (function (_super) {
     };
     TextBuilder.prototype.block_listnum_pre = function (process, node) {
         process.out("◆→開始:リスト←◆\n");
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
-        var text = i18n_1.t("builder.list", chapter.fqn, node.no);
+        var text = (0, i18n_1.t)("builder.list", chapter.fqn, node.no);
         process.out(text).out("　");
         var lineCount = 1;
         return function (v) {
             // name はパスしたい, langもパスしたい
-            walker_1.visit(node.args[1], v);
+            (0, walker_1.visit)(node.args[1], v);
             var lineCountMax = 0;
             node.childNodes.forEach(function (node, _index, _childNodes) {
                 if (node.isTextNode()) {
                     lineCountMax += node.toTextNode().text.split("\n").length;
                 }
             });
-            var lineDigit = Math.max(utils_1.linesToFigure(lineCountMax), 2);
+            var lineDigit = Math.max((0, utils_1.linesToFigure)(lineCountMax), 2);
             process.outRaw("\n\n");
             node.childNodes.forEach(function (node, index, childNodes) {
                 if (node.isTextNode()) {
@@ -1528,7 +1532,7 @@ var TextBuilder = /** @class */ (function (_super) {
                     var textNode = node.toTextNode();
                     var lines_1 = textNode.text.split("\n");
                     lines_1.forEach(function (line, index) {
-                        process.out(utils_1.padLeft(String(lineCount), " ", lineDigit)).out(": ");
+                        process.out((0, utils_1.padLeft)(String(lineCount), " ", lineDigit)).out(": ");
                         process.out(line);
                         if (!hasNext_1 || lines_1.length - 1 !== index) {
                             lineCount++;
@@ -1537,7 +1541,7 @@ var TextBuilder = /** @class */ (function (_super) {
                     });
                 }
                 else {
-                    walker_1.visit(node, v);
+                    (0, walker_1.visit)(node, v);
                 }
                 lineCount++;
             });
@@ -1547,13 +1551,13 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("◆→終了:リスト←◆\n");
     };
     TextBuilder.prototype.inline_list = function (process, node) {
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
         var listNode = this.findReference(process, node).referenceTo.referenceNode.toBlockElement();
-        var text = i18n_1.t("builder.list", chapter.fqn, listNode.no);
+        var text = (0, i18n_1.t)("builder.list", chapter.fqn, listNode.no);
         process.out(text);
         return false;
     };
@@ -1563,13 +1567,13 @@ var TextBuilder = /** @class */ (function (_super) {
             // name はパスしたい
             if (node.args[0]) {
                 process.out("■");
-                walker_1.visit(node.args[0], v);
+                (0, walker_1.visit)(node.args[0], v);
                 process.out("\n");
             }
             var nodeCount = node.childNodes.length;
             var nodeIndex = 0;
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
                 // 入力の改行が保持されるべきだが、ASTのパースで消えてしまうため補完。
                 // なお、\rは保持されるので、元ファイルの改行コードが\r\nの場合の考慮は不要。
                 nodeIndex++;
@@ -1589,7 +1593,7 @@ var TextBuilder = /** @class */ (function (_super) {
             // name はパスしたい
             if (node.args[0]) {
                 process.out("■");
-                walker_1.visit(node.args[0], v);
+                (0, walker_1.visit)(node.args[0], v);
                 process.out("\n");
             }
             var lineCountMax = 0;
@@ -1598,7 +1602,7 @@ var TextBuilder = /** @class */ (function (_super) {
                     lineCountMax += node.toTextNode().text.split("\n").length;
                 }
             });
-            var lineDigit = Math.max(utils_1.linesToFigure(lineCountMax), 2);
+            var lineDigit = Math.max((0, utils_1.linesToFigure)(lineCountMax), 2);
             node.childNodes.forEach(function (node, index, childNodes) {
                 if (node.isTextNode()) {
                     // 改行する可能性があるのはTextNodeだけ…のはず
@@ -1606,7 +1610,7 @@ var TextBuilder = /** @class */ (function (_super) {
                     var textNode = node.toTextNode();
                     var lines_2 = textNode.text.split("\n");
                     lines_2.forEach(function (line, index) {
-                        process.out(utils_1.padLeft(String(lineCount), " ", lineDigit)).out(": ");
+                        process.out((0, utils_1.padLeft)(String(lineCount), " ", lineDigit)).out(": ");
                         process.out(line);
                         if (!hasNext_2 || lines_2.length - 1 !== index) {
                             lineCount++;
@@ -1615,7 +1619,7 @@ var TextBuilder = /** @class */ (function (_super) {
                     });
                 }
                 else {
-                    walker_1.visit(node, v);
+                    (0, walker_1.visit)(node, v);
                 }
                 lineCount++;
             });
@@ -1647,7 +1651,7 @@ var TextBuilder = /** @class */ (function (_super) {
     };
     TextBuilder.prototype.inline_href = function (process, node) {
         var href = null;
-        var text = utils_1.nodeContentToString(process, node);
+        var text = (0, utils_1.nodeContentToString)(process, node);
         if (text.indexOf(",") !== -1) {
             href = text.slice(0, text.indexOf(","));
             text = text.slice(text.indexOf(",") + 1).trimLeft();
@@ -1664,7 +1668,7 @@ var TextBuilder = /** @class */ (function (_super) {
         return false;
     };
     TextBuilder.prototype.inline_ruby = function (process, node) {
-        var contentString = utils_1.nodeContentToString(process, node);
+        var contentString = (0, utils_1.nodeContentToString)(process, node);
         var keywordData = contentString.split(",");
         process.out(keywordData[0]);
         return function (_v) {
@@ -1686,13 +1690,13 @@ var TextBuilder = /** @class */ (function (_super) {
         return function (_v) {
             // name, args はパス
             node.childNodes.forEach(function (node) {
-                var contentString = utils_1.nodeContentToString(process, node);
+                var contentString = (0, utils_1.nodeContentToString)(process, node);
                 var keywordData = contentString.split(",");
                 var pre = keywordData[0];
                 var post = (keywordData[1] || "").trimLeft();
-                process.out(pre + "\u2606");
+                process.out("".concat(pre, "\u2606"));
                 if (post) {
-                    process.out("\uFF08" + post + "\uFF09");
+                    process.out("\uFF08".concat(post, "\uFF09"));
                 }
             });
         };
@@ -1704,17 +1708,17 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("☆");
     };
     TextBuilder.prototype.inline_em_pre = function (process, node) {
-        process.warn(i18n_1.t("compile.deprecated_inline_symbol", "em"), node);
+        process.warn((0, i18n_1.t)("compile.deprecated_inline_symbol", "em"), node);
         process.out("@<em>{");
     };
     TextBuilder.prototype.inline_em_post = function (process, _node) {
         process.out("}");
     };
     TextBuilder.prototype.block_image = function (process, node) {
-        var label = utils_1.nodeContentToString(process, node.args[0]);
+        var label = (0, utils_1.nodeContentToString)(process, node.args[0]);
         return process.findImageFile(label)
             .then(function (imagePath) {
-            var caption = utils_1.nodeContentToString(process, node.args[1]);
+            var caption = (0, utils_1.nodeContentToString)(process, node.args[1]);
             process.out("◆→開始:図←◆\n");
             process.out("図").out(process.base.chapter.no).out(".").out(node.no).out("　").out(caption).out("\n");
             process.out("\n");
@@ -1723,26 +1727,26 @@ var TextBuilder = /** @class */ (function (_super) {
             return false;
         })
             .catch(function (id) {
-            process.error(i18n_1.t("builder.image_not_found", id), node);
+            process.error((0, i18n_1.t)("builder.image_not_found", id), node);
             return false;
         });
     };
     TextBuilder.prototype.block_indepimage = function (process, node) {
-        process.out("◆→画像 ").out(utils_1.nodeContentToString(process, node.args[0])).out("←◆\n");
+        process.out("◆→画像 ").out((0, utils_1.nodeContentToString)(process, node.args[0])).out("←◆\n");
         if (node.args[1]) {
-            process.out("図　").out(utils_1.nodeContentToString(process, node.args[1])).out("\n\n");
+            process.out("図　").out((0, utils_1.nodeContentToString)(process, node.args[1])).out("\n\n");
         }
         return false;
     };
     TextBuilder.prototype.block_graph_pre = function (process, node) {
         // TODO 以下はとりあえず正規のRe:VIEW文書が食えるようにするための仮実装
         process.outRaw("◆→開始:図←◆\n");
-        var toolName = utils_1.nodeContentToString(process, node.args[1]);
+        var toolName = (0, utils_1.nodeContentToString)(process, node.args[1]);
         process.outRaw("graph: ").out(toolName).outRaw("</p>\n");
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1759,7 +1763,7 @@ var TextBuilder = /** @class */ (function (_super) {
         // TODO ファイル名探索ロジックをもっと頑張る(jpgとかsvgとか)
         var chapterFileName = process.base.chapter.name;
         var chapterName = chapterFileName.substring(0, chapterFileName.length - 3);
-        var imageName = utils_1.nodeContentToString(process, node);
+        var imageName = (0, utils_1.nodeContentToString)(process, node);
         var imagePath = "images/" + chapterName + "-" + imageName + ".png";
         process.out("◆→画像 ").out(imagePath).out("←◆");
         return false;
@@ -1767,7 +1771,7 @@ var TextBuilder = /** @class */ (function (_super) {
     TextBuilder.prototype.block_footnote = function (process, node) {
         process.out("【注").out(node.no).out("】");
         return function (v) {
-            walker_1.visit(node.args[1], v);
+            (0, walker_1.visit)(node.args[1], v);
             process.out("\n");
         };
     };
@@ -1804,11 +1808,11 @@ var TextBuilder = /** @class */ (function (_super) {
     };
     TextBuilder.prototype.block_source_pre = function (process, node) {
         process.out("◆→開始:ソースコードリスト←◆\n");
-        process.out("■").out(utils_1.nodeContentToString(process, node.args[0])).out("\n");
+        process.out("■").out((0, utils_1.nodeContentToString)(process, node.args[0])).out("\n");
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1820,7 +1824,7 @@ var TextBuilder = /** @class */ (function (_super) {
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1832,7 +1836,7 @@ var TextBuilder = /** @class */ (function (_super) {
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -1843,13 +1847,13 @@ var TextBuilder = /** @class */ (function (_super) {
     };
     TextBuilder.prototype.inline_ami_post = function (process, node) {
         // TODO 入れ子になっている場合オペレータさんにイミフな出力になっちゃう
-        process.out("◆→DTP連絡:「").out(utils_1.nodeContentToString(process, node)).out("」に網カケ←◆");
+        process.out("◆→DTP連絡:「").out((0, utils_1.nodeContentToString)(process, node)).out("」に網カケ←◆");
     };
     TextBuilder.prototype.inline_bou_pre = function (_process, _node) {
     };
     TextBuilder.prototype.inline_bou_post = function (process, node) {
         // TODO 入れ子になっている場合オペレータさんにイミフな出力になっちゃう
-        process.out("◆→DTP連絡:「").out(utils_1.nodeContentToString(process, node)).out("」に傍点←◆");
+        process.out("◆→DTP連絡:「").out((0, utils_1.nodeContentToString)(process, node)).out("」に傍点←◆");
     };
     TextBuilder.prototype.inline_del_pre = function (process, _node) {
         process.out("◆→開始:削除表現←◆");
@@ -1889,27 +1893,27 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("◆→終了:縦回転←◆");
     };
     TextBuilder.prototype.inline_uchar = function (process, node) {
-        var hexString = utils_1.nodeContentToString(process, node);
+        var hexString = (0, utils_1.nodeContentToString)(process, node);
         var code = parseInt(hexString, 16);
         var result = "";
-        /* tslint:disable:no-bitwise */
+        /* eslint-disable no-bitwise*/
         while (code !== 0) {
             result = String.fromCharCode(code & 0xFFFF) + result;
             code >>>= 16;
         }
-        /* tslint:enable:no-bitwise */
+        /* eslint-enable no-bitwise */
         process.out(result);
         return false;
     };
     TextBuilder.prototype.block_table_pre = function (process, node) {
         process.out("\n◆→開始:表←◆\n");
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
-        var text = i18n_1.t("builder.table", chapter.fqn, node.no);
-        process.out(text).out("　").out(utils_1.nodeContentToString(process, node.args[1])).out("\n\n");
+        var text = (0, i18n_1.t)("builder.table", chapter.fqn, node.no);
+        process.out(text).out("　").out((0, utils_1.nodeContentToString)(process, node.args[1])).out("\n\n");
         var table = this.parseTable(node.childNodes);
         return function (v) {
             if (table.headerRowCount === 0) {
@@ -1921,14 +1925,14 @@ var TextBuilder = /** @class */ (function (_super) {
                     // ヘッダー列
                     process.out("★");
                     columns[0].nodes.forEach(function (node) {
-                        walker_1.visit(node, v);
+                        (0, walker_1.visit)(node, v);
                     });
                     process.out("☆");
                     // 残りの列
                     for (var c = 1; c < columns.length; c++) {
                         process.outRaw("\t");
                         columns[c].nodes.forEach(function (node) {
-                            walker_1.visit(node, v);
+                            (0, walker_1.visit)(node, v);
                         });
                     }
                     process.outRaw("\n");
@@ -1943,7 +1947,7 @@ var TextBuilder = /** @class */ (function (_super) {
                         // TODO: ヘッダーにインラインがある場合は？
                         process.out("★");
                         cell.nodes.forEach(function (node) {
-                            walker_1.visit(node, v);
+                            (0, walker_1.visit)(node, v);
                         });
                         process.out("☆");
                         if (index < columns.length - 1) {
@@ -1961,7 +1965,7 @@ var TextBuilder = /** @class */ (function (_super) {
                     var columns = table.cells[r];
                     columns.forEach(function (cell, index) {
                         cell.nodes.forEach(function (node) {
-                            walker_1.visit(node, v);
+                            (0, walker_1.visit)(node, v);
                         });
                         if (index < columns.length - 1) {
                             process.outRaw("\t");
@@ -1982,13 +1986,13 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("◆→終了:表←◆\n\n");
     };
     TextBuilder.prototype.inline_table = function (process, node) {
-        var chapter = utils_1.findChapter(node, 1);
+        var chapter = (0, utils_1.findChapter)(node, 1);
         if (!chapter) {
-            process.error(i18n_1.t("builder.chapter_not_found", 1), node);
+            process.error((0, i18n_1.t)("builder.chapter_not_found", 1), node);
             return false;
         }
         var listNode = this.findReference(process, node).referenceTo.referenceNode.toBlockElement();
-        var text = i18n_1.t("builder.table", chapter.fqn, listNode.no);
+        var text = (0, i18n_1.t)("builder.table", chapter.fqn, listNode.no);
         process.out(text);
         return false;
     };
@@ -2005,7 +2009,7 @@ var TextBuilder = /** @class */ (function (_super) {
         return function (v) {
             // name, args はパスしたい
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -2030,40 +2034,40 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("←◆");
     };
     TextBuilder.prototype.inline_chap = function (process, node) {
-        var chapName = utils_1.nodeContentToString(process, node);
+        var chapName = (0, utils_1.nodeContentToString)(process, node);
         var chapter = process.findChapter(chapName);
         process.out("第").out(chapter.no).out("章");
         return false;
     };
     TextBuilder.prototype.inline_title = function (process, node) {
-        var chapName = utils_1.nodeContentToString(process, node);
+        var chapName = (0, utils_1.nodeContentToString)(process, node);
         var chapter = process.findChapter(chapName);
         var title = this.getChapterTitle(process, chapter);
         process.out(title);
         return false;
     };
     TextBuilder.prototype.inline_chapref = function (process, node) {
-        var chapName = utils_1.nodeContentToString(process, node);
+        var chapName = (0, utils_1.nodeContentToString)(process, node);
         var chapter = process.findChapter(chapName);
         var title = this.getChapterTitle(process, chapter);
         process.out("第").out(chapter.no).out("章「").out(title).out("」");
         return false;
     };
     TextBuilder.prototype.inline_idx = function (process, node) {
-        var text = utils_1.nodeContentToString(process, node);
-        process.out(text + "\u25C6\u2192\u7D22\u5F15\u9805\u76EE:" + text + "\u2190\u25C6");
+        var text = (0, utils_1.nodeContentToString)(process, node);
+        process.out("".concat(text, "\u25C6\u2192\u7D22\u5F15\u9805\u76EE:").concat(text, "\u2190\u25C6"));
         return false;
     };
     TextBuilder.prototype.inline_hidx = function (process, node) {
-        var text = utils_1.nodeContentToString(process, node);
-        process.out("\u25C6\u2192\u7D22\u5F15\u9805\u76EE:" + text + "\u2190\u25C6");
+        var text = (0, utils_1.nodeContentToString)(process, node);
+        process.out("\u25C6\u2192\u7D22\u5F15\u9805\u76EE:".concat(text, "\u2190\u25C6"));
         return false;
     };
     TextBuilder.prototype.block_flushright_pre = function (process, node) {
         process.out("◆→開始:右寄せ←◆\n");
         return function (v) {
             node.childNodes.forEach(function (node) {
-                walker_1.visit(node, v);
+                (0, walker_1.visit)(node, v);
             });
         };
     };
@@ -2071,14 +2075,14 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("\n◆→終了:右寄せ←◆\n");
     };
     TextBuilder.prototype.block_captionblock_pre = function (typename, process, node) {
-        process.out("\u25C6\u2192\u958B\u59CB:" + typename + "\u2190\u25C6\n");
+        process.out("\u25C6\u2192\u958B\u59CB:".concat(typename, "\u2190\u25C6\n"));
         if (node.args[0]) {
-            var caption = utils_1.nodeContentToString(process, node.args[0]);
-            process.out("\u25A0" + caption + "\n");
+            var caption = (0, utils_1.nodeContentToString)(process, node.args[0]);
+            process.out("\u25A0".concat(caption, "\n"));
         }
     };
     TextBuilder.prototype.block_captionblock_post = function (typename, process, _node) {
-        process.out("\u25C6\u2192\u7D42\u4E86:" + typename + "\u2190\u25C6\n");
+        process.out("\u25C6\u2192\u7D42\u4E86:".concat(typename, "\u2190\u25C6\n"));
     };
     TextBuilder.prototype.block_info_pre = function (process, node) {
         this.block_captionblock_pre("情報", process, node);
@@ -2138,10 +2142,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2640,9 +2646,32 @@ exports.ContentStructure = ContentStructure;
 
 },{}],6:[function(require,module,exports){
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Controller = void 0;
-var PEG = require("../../resources/grammar");
+var PEG = __importStar(require("../../resources/grammar"));
 var compilerModel_1 = require("../model/compilerModel");
 var parser_1 = require("../parser/parser");
 var config_1 = require("./config");
@@ -2669,7 +2698,7 @@ var Controller = /** @class */ (function () {
      * @param data
      */
     Controller.prototype.initConfig = function (data) {
-        if (utils_1.isNodeJS()) {
+        if ((0, utils_1.isNodeJS)()) {
             this.config = new config_1.NodeJSConfig(this.options, data);
         }
         else {
@@ -2740,7 +2769,7 @@ var Controller = /** @class */ (function () {
     Controller.prototype.parseContent = function (book) {
         var _parse = function (chunk) {
             try {
-                chunk.tree = parser_2.parse(chunk.input);
+                chunk.tree = (0, parser_2.parse)(chunk.input);
             }
             catch (e) {
                 if (!(e instanceof PEG.SyntaxError)) {
@@ -2755,7 +2784,7 @@ var Controller = /** @class */ (function () {
                             column: se.column,
                             offset: se.offset
                         },
-                        end: void 0,
+                        end: void 0, // TODO SyntaxError が置き換えられたらなんとかできるかも…
                     }
                 });
                 chunk.tree = { ast: errorNode, cst: null }; // TODO null! をやめる
@@ -2774,7 +2803,7 @@ var Controller = /** @class */ (function () {
         var numberingChapter = function (chunk, counter) {
             // TODO partにも分け隔てなく採番してるけど間違ってるっしょ
             var chapters = [];
-            walker_1.visit(chunk.tree.ast, {
+            (0, walker_1.visit)(chunk.tree.ast, {
                 visitDefaultPre: function (_node) {
                 },
                 visitChapterPre: function (node) {
@@ -2881,15 +2910,18 @@ exports.en = {
 
 },{}],8:[function(require,module,exports){
 "use strict";
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.t = exports.setup = void 0;
+exports.setup = setup;
+exports.t = t;
 var utils_1 = require("./utils");
 var utils_2 = require("../utils/utils");
 var en_1 = require("./en");
@@ -2898,13 +2930,12 @@ var langs = {
     ja: ja_1.ja,
     en: en_1.en,
 };
-var resource = utils_1.deepAssign({}, langs.en, langs.ja);
+var resource = (0, utils_1.deepAssign)({}, langs.en, langs.ja);
 function setup(lang) {
     "use strict";
     if (lang === void 0) { lang = "ja"; }
-    resource = utils_1.deepAssign({}, langs.en, langs.ja, langs[lang]);
+    resource = (0, utils_1.deepAssign)({}, langs.en, langs.ja, langs[lang]);
 }
-exports.setup = setup;
 var sprintf;
 if (typeof window !== "undefined" && window.sprintf) {
     sprintf = window.sprintf;
@@ -2913,7 +2944,7 @@ else {
     sprintf = require("sprintf-js").sprintf;
 }
 if (utils_2.isNodeJS != null) {
-    utils_2.isNodeJS(); // TODO utilsをi18n.ts内で使わないと実行時エラーになる
+    (0, utils_2.isNodeJS)(); // TODO utilsをi18n.ts内で使わないと実行時エラーになる
 }
 function t(str) {
     "use strict";
@@ -2927,11 +2958,10 @@ function t(str) {
         base = base[part];
     });
     if (typeof base !== "string") {
-        throw new Error("unknown key: " + str);
+        throw new Error("unknown key: ".concat(str));
     }
-    return sprintf.apply(void 0, __spreadArrays([base], args));
+    return sprintf.apply(void 0, __spreadArray([base], args, false));
 }
-exports.t = t;
 setup();
 
 },{"../utils/utils":20,"./en":7,"./ja":9,"./utils":10,"sprintf-js":undefined}],9:[function(require,module,exports){
@@ -3041,7 +3071,7 @@ exports.ja = {
 },{}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deepAssign = void 0;
+exports.deepAssign = deepAssign;
 function deepAssign(target) {
     "use strict";
     var args = [];
@@ -3060,22 +3090,26 @@ function deepAssign(target) {
     });
     return target;
 }
-exports.deepAssign = deepAssign;
 
 },{}],11:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.start = exports.SyntaxType = exports.TextBuilder = exports.HtmlBuilder = exports.DefaultBuilder = exports.DefaultValidator = exports.DefaultAnalyzer = exports.AcceptableSyntaxes = exports.SyntaxTree = exports.ProcessReport = exports.ReportLevel = exports.ContentChunk = exports.Book = void 0;
+exports.SyntaxType = exports.TextBuilder = exports.HtmlBuilder = exports.DefaultBuilder = exports.DefaultValidator = exports.DefaultAnalyzer = exports.AcceptableSyntaxes = exports.SyntaxTree = exports.ProcessReport = exports.ReportLevel = exports.ContentChunk = exports.Book = void 0;
+exports.start = start;
 var compilerModel_1 = require("./model/compilerModel");
 Object.defineProperty(exports, "Book", { enumerable: true, get: function () { return compilerModel_1.Book; } });
 Object.defineProperty(exports, "ContentChunk", { enumerable: true, get: function () { return compilerModel_1.ContentChunk; } });
@@ -3111,7 +3145,6 @@ function start(setup, options) {
     setup(controller);
     return controller.process();
 }
-exports.start = start;
 
 },{"./builder/builder":1,"./builder/htmlBuilder":2,"./builder/textBuilder":3,"./controller/controller":6,"./model/compilerModel":13,"./parser/analyzer":14,"./parser/parser":15,"./parser/validator":17}],12:[function(require,module,exports){
 "use strict";
@@ -3119,10 +3152,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -3180,7 +3215,7 @@ var ReportLevel;
     ReportLevel[ReportLevel["Info"] = 0] = "Info";
     ReportLevel[ReportLevel["Warning"] = 1] = "Warning";
     ReportLevel[ReportLevel["Error"] = 2] = "Error";
-})(ReportLevel = exports.ReportLevel || (exports.ReportLevel = {}));
+})(ReportLevel || (exports.ReportLevel = ReportLevel = {}));
 /**
  * 処理時に発生したレポート。
  */
@@ -3305,7 +3340,7 @@ var Process = /** @class */ (function () {
         if (targetSymbol === "chapter") {
             // 常に {章ID} でなければならない
             if (splitted.length !== 1) {
-                var message = i18n_1.t("compile.args_length_mismatch", "1", splitted.length);
+                var message = (0, i18n_1.t)("compile.args_length_mismatch", "1", splitted.length);
                 this.error(message, node);
                 return null;
             }
@@ -3317,7 +3352,7 @@ var Process = /** @class */ (function () {
         if (targetSymbol === "fn") {
             // 常に {ラベル} でなければならない
             if (splitted.length !== 1) {
-                var message = i18n_1.t("compile.args_length_mismatch", "1", splitted.length);
+                var message = (0, i18n_1.t)("compile.args_length_mismatch", "1", splitted.length);
                 this.error(message, node);
                 return null;
             }
@@ -3346,7 +3381,7 @@ var Process = /** @class */ (function () {
                 };
             }
             else {
-                var message = i18n_1.t("compile.args_length_mismatch", "1 or 2", splitted.length);
+                var message = (0, i18n_1.t)("compile.args_length_mismatch", "1 or 2", splitted.length);
                 this.error(message, node);
                 return null;
             }
@@ -3370,7 +3405,7 @@ var Process = /** @class */ (function () {
                 };
             }
             else {
-                var message = i18n_1.t("compile.args_hd_path_not_implemented", splitted.length);
+                var message = (0, i18n_1.t)("compile.args_hd_path_not_implemented", splitted.length);
                 this.error(message, node);
                 return null;
             }
@@ -3450,7 +3485,7 @@ var BuilderProcess = /** @class */ (function () {
                 return true;
             }
             var chapter = null;
-            walker_1.visit(chunk.tree.ast, {
+            (0, walker_1.visit)(chunk.tree.ast, {
                 visitDefaultPre: function (_node, _parent) {
                     return !chapter;
                 },
@@ -3660,7 +3695,7 @@ var SyntaxType;
     SyntaxType[SyntaxType["Block"] = 0] = "Block";
     SyntaxType[SyntaxType["Inline"] = 1] = "Inline";
     SyntaxType[SyntaxType["Other"] = 2] = "Other";
-})(SyntaxType = exports.SyntaxType || (exports.SyntaxType = {}));
+})(SyntaxType || (exports.SyntaxType = SyntaxType = {}));
 /**
  * ReVIEW文書として受理可能な要素群。
  * JSON.stringify でJSON化した時、エディタ上での入力補完に活用できるデータが得られる。
@@ -3714,7 +3749,7 @@ var AcceptableSyntaxes = /** @class */ (function () {
     AcceptableSyntaxes.prototype.toJSON = function () {
         // そのままJSON化するとAcceptableSyntax.typeの扱いに難儀すると思うので文字列に複合可能なデータを抱き合わせにする
         return {
-            "rev": "1",
+            "rev": "1", // データフォーマットのリビジョン
             "SyntaxType": SyntaxType,
             "acceptableSyntaxes": this.acceptableSyntaxes
         };
@@ -3863,7 +3898,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.headline = function (builder) {
         builder.setSyntaxType(SyntaxType.Other);
         builder.setClass(parser_1.HeadlineSyntaxTree);
-        builder.setDescription(i18n_1.t("description.headline"));
+        builder.setDescription((0, i18n_1.t)("description.headline"));
         builder.processNode(function (process, n) {
             var node = n.toHeadline();
             var label = null;
@@ -3871,7 +3906,7 @@ var DefaultAnalyzer = /** @class */ (function () {
                 label = node.label.arg;
             }
             else {
-                label = utils_1.nodeContentToString(process, node.caption);
+                label = (0, utils_1.nodeContentToString)(process, node.caption);
             }
             process.addSymbol({
                 symbolName: "hd",
@@ -3898,7 +3933,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.column = function (builder) {
         builder.setSyntaxType(SyntaxType.Other);
         builder.setClass(parser_1.ColumnSyntaxTree);
-        builder.setDescription(i18n_1.t("description.column"));
+        builder.setDescription((0, i18n_1.t)("description.column"));
         builder.processNode(function (process, n) {
             var node = n.toColumn();
             node.no = process.nextIndex("column");
@@ -3911,7 +3946,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.ulist = function (builder) {
         builder.setSyntaxType(SyntaxType.Other);
         builder.setClass(parser_1.UlistElementSyntaxTree);
-        builder.setDescription(i18n_1.t("description.ulist"));
+        builder.setDescription((0, i18n_1.t)("description.ulist"));
         builder.processNode(function (process, n) {
             var node = n.toUlist();
             process.addSymbol({
@@ -3923,7 +3958,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.olist = function (builder) {
         builder.setSyntaxType(SyntaxType.Other);
         builder.setClass(parser_1.OlistElementSyntaxTree);
-        builder.setDescription(i18n_1.t("description.olist"));
+        builder.setDescription((0, i18n_1.t)("description.olist"));
         builder.processNode(function (process, n) {
             var node = n.toOlist();
             process.addSymbol({
@@ -3935,7 +3970,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.dlist = function (builder) {
         builder.setSyntaxType(SyntaxType.Other);
         builder.setClass(parser_1.DlistElementSyntaxTree);
-        builder.setDescription(i18n_1.t("description.dlist"));
+        builder.setDescription((0, i18n_1.t)("description.dlist"));
         builder.processNode(function (process, n) {
             var node = n.toDlist();
             process.addSymbol({
@@ -3947,14 +3982,14 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_list = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("list");
-        builder.setDescription(i18n_1.t("description.block_list"));
+        builder.setDescription((0, i18n_1.t)("description.block_list"));
         builder.checkArgsLength(2, 3);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
             node.no = process.nextIndex("list");
             process.addSymbol({
                 symbolName: node.symbol,
-                labelName: utils_1.nodeContentToString(process, node.args[0]),
+                labelName: (0, utils_1.nodeContentToString)(process, node.args[0]),
                 node: node
             });
         });
@@ -3962,14 +3997,14 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_listnum = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("listnum");
-        builder.setDescription(i18n_1.t("description.block_listnum"));
+        builder.setDescription((0, i18n_1.t)("description.block_listnum"));
         builder.checkArgsLength(2, 3);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
             node.no = process.nextIndex("list");
             process.addSymbol({
                 symbolName: "list",
-                labelName: utils_1.nodeContentToString(process, node.args[0]),
+                labelName: (0, utils_1.nodeContentToString)(process, node.args[0]),
                 node: node
             });
         });
@@ -3977,12 +4012,12 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_list = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("list");
-        builder.setDescription(i18n_1.t("description.inline_list"));
+        builder.setDescription((0, i18n_1.t)("description.inline_list"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node)),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node)),
                 node: node
             });
         });
@@ -3990,7 +4025,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_emlist = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("emlist");
-        builder.setDescription(i18n_1.t("description.block_emlist"));
+        builder.setDescription((0, i18n_1.t)("description.block_emlist"));
         builder.checkArgsLength(0, 1, 2);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
@@ -4003,7 +4038,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_emlistnum = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("emlistnum");
-        builder.setDescription(i18n_1.t("description.block_emlistnum"));
+        builder.setDescription((0, i18n_1.t)("description.block_emlistnum"));
         builder.checkArgsLength(0, 1, 2);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
@@ -4016,12 +4051,12 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_hd = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("hd");
-        builder.setDescription(i18n_1.t("description.inline_hd"));
+        builder.setDescription((0, i18n_1.t)("description.inline_hd"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node)),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node)),
                 node: node
             });
         });
@@ -4029,14 +4064,14 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_image = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("image");
-        builder.setDescription(i18n_1.t("description.block_image"));
+        builder.setDescription((0, i18n_1.t)("description.block_image"));
         builder.checkArgsLength(2, 3);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
             node.no = process.nextIndex("image");
             process.addSymbol({
                 symbolName: node.symbol,
-                labelName: utils_1.nodeContentToString(process, node.args[0]),
+                labelName: (0, utils_1.nodeContentToString)(process, node.args[0]),
                 node: node
             });
         });
@@ -4044,7 +4079,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_indepimage = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("indepimage");
-        builder.setDescription(i18n_1.t("description.block_indepimage"));
+        builder.setDescription((0, i18n_1.t)("description.block_indepimage"));
         builder.checkArgsLength(1, 2, 3);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
@@ -4057,14 +4092,14 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_graph = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("graph");
-        builder.setDescription(i18n_1.t("description.block_graph"));
+        builder.setDescription((0, i18n_1.t)("description.block_graph"));
         builder.checkArgsLength(2, 3);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
             node.no = process.nextIndex("image");
             process.addSymbol({
                 symbolName: "image",
-                labelName: utils_1.nodeContentToString(process, node.args[0]),
+                labelName: (0, utils_1.nodeContentToString)(process, node.args[0]),
                 node: node
             });
         });
@@ -4072,12 +4107,12 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_img = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("img");
-        builder.setDescription(i18n_1.t("description.inline_img"));
+        builder.setDescription((0, i18n_1.t)("description.inline_img"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node), "image"),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node), "image"),
                 node: node
             });
         });
@@ -4085,7 +4120,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_icon = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("icon");
-        builder.setDescription(i18n_1.t("description.inline_icon"));
+        builder.setDescription((0, i18n_1.t)("description.inline_icon"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
@@ -4097,14 +4132,14 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_footnote = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("footnote");
-        builder.setDescription(i18n_1.t("description.block_footnote"));
+        builder.setDescription((0, i18n_1.t)("description.block_footnote"));
         builder.checkArgsLength(2);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
             node.no = process.nextIndex("footnote");
             process.addSymbol({
                 symbolName: node.symbol,
-                labelName: utils_1.nodeContentToString(process, node.args[0]),
+                labelName: (0, utils_1.nodeContentToString)(process, node.args[0]),
                 node: node
             });
         });
@@ -4112,12 +4147,12 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_fn = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("fn");
-        builder.setDescription(i18n_1.t("description.inline_fn"));
+        builder.setDescription((0, i18n_1.t)("description.inline_fn"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node), "footnote"),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node), "footnote"),
                 node: node
             });
         });
@@ -4125,7 +4160,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_idx = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("idx");
-        builder.setDescription(i18n_1.t("description.inline_idx"));
+        builder.setDescription((0, i18n_1.t)("description.inline_idx"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
@@ -4137,7 +4172,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_hidx = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("hidx");
-        builder.setDescription(i18n_1.t("description.inline_hidx"));
+        builder.setDescription((0, i18n_1.t)("description.inline_hidx"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
@@ -4153,7 +4188,7 @@ var DefaultAnalyzer = /** @class */ (function () {
         }
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol(symbol);
-        builder.setDescription(i18n_1.t("description.block_" + symbol));
+        builder.setDescription((0, i18n_1.t)("description.block_" + symbol));
         builder.checkArgsLength.apply(builder, argsLength);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
@@ -4185,7 +4220,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inlineDecorationSyntax = function (builder, symbol) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol(symbol);
-        builder.setDescription(i18n_1.t("description.inline_" + symbol));
+        builder.setDescription((0, i18n_1.t)("description.inline_" + symbol));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
@@ -4215,14 +4250,14 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_label = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("label");
-        builder.setDescription(i18n_1.t("description.block_label"));
+        builder.setDescription((0, i18n_1.t)("description.block_label"));
         builder.checkArgsLength(1);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
             node.no = process.nextIndex("label");
             process.addSymbol({
                 symbolName: node.symbol,
-                labelName: utils_1.nodeContentToString(process, node.args[0]),
+                labelName: (0, utils_1.nodeContentToString)(process, node.args[0]),
                 node: node
             });
         });
@@ -4272,14 +4307,14 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_table = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("table");
-        builder.setDescription(i18n_1.t("description.block_table"));
+        builder.setDescription((0, i18n_1.t)("description.block_table"));
         builder.checkArgsLength(2);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
             node.no = process.nextIndex("table");
             process.addSymbol({
                 symbolName: node.symbol,
-                labelName: utils_1.nodeContentToString(process, node.args[0]),
+                labelName: (0, utils_1.nodeContentToString)(process, node.args[0]),
                 node: node
             });
         });
@@ -4287,19 +4322,19 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_table = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("table");
-        builder.setDescription(i18n_1.t("description.inline_table"));
+        builder.setDescription((0, i18n_1.t)("description.inline_table"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node)),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node)),
                 node: node
             });
         });
     };
     DefaultAnalyzer.prototype.block_tsize = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
-        builder.setDescription(i18n_1.t("description.block_tsize"));
+        builder.setDescription((0, i18n_1.t)("description.block_tsize"));
         builder.checkArgsLength(1);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
@@ -4312,7 +4347,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_raw = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("raw");
-        builder.setDescription(i18n_1.t("description.block_raw"));
+        builder.setDescription((0, i18n_1.t)("description.block_raw"));
         builder.checkArgsLength(1);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
@@ -4325,7 +4360,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_raw = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("raw");
-        builder.setDescription(i18n_1.t("description.inline_raw"));
+        builder.setDescription((0, i18n_1.t)("description.inline_raw"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
@@ -4337,7 +4372,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_comment = function (builder) {
         builder.setSyntaxType(SyntaxType.Block);
         builder.setSymbol("comment");
-        builder.setDescription(i18n_1.t("description.block_comment"));
+        builder.setDescription((0, i18n_1.t)("description.block_comment"));
         builder.checkArgsLength(0);
         builder.processNode(function (process, n) {
             var node = n.toBlockElement();
@@ -4350,7 +4385,7 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_comment = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("comment");
-        builder.setDescription(i18n_1.t("description.inline_comment"));
+        builder.setDescription((0, i18n_1.t)("description.inline_comment"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
@@ -4362,12 +4397,12 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_chap = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("chap");
-        builder.setDescription(i18n_1.t("description.inline_chap"));
+        builder.setDescription((0, i18n_1.t)("description.inline_chap"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node), "chapter"),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node), "chapter"),
                 node: node
             });
         });
@@ -4375,12 +4410,12 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_title = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("title");
-        builder.setDescription(i18n_1.t("description.inline_title"));
+        builder.setDescription((0, i18n_1.t)("description.inline_title"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node), "chapter"),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node), "chapter"),
                 node: node
             });
         });
@@ -4388,12 +4423,12 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_chapref = function (builder) {
         builder.setSyntaxType(SyntaxType.Inline);
         builder.setSymbol("chapref");
-        builder.setDescription(i18n_1.t("description.inline_chapref"));
+        builder.setDescription((0, i18n_1.t)("description.inline_chapref"));
         builder.processNode(function (process, n) {
             var node = n.toInlineElement();
             process.addSymbol({
                 symbolName: node.symbol,
-                referenceTo: process.constructReferenceTo(node, utils_1.nodeContentToString(process, node), "chapter"),
+                referenceTo: process.constructReferenceTo(node, (0, utils_1.nodeContentToString)(process, node), "chapter"),
                 node: node
             });
         });
@@ -4443,18 +4478,45 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SingleLineCommentSyntaxTree = exports.TextNodeSyntaxTree = exports.DlistElementSyntaxTree = exports.OlistElementSyntaxTree = exports.UlistElementSyntaxTree = exports.ArgumentSyntaxTree = exports.ColumnHeadlineSyntaxTree = exports.ColumnSyntaxTree = exports.InlineElementSyntaxTree = exports.BlockElementSyntaxTree = exports.HeadlineSyntaxTree = exports.ChapterSyntaxTree = exports.NodeSyntaxTree = exports.SyntaxTree = exports.RuleName = exports.ParseError = exports.transform = exports.parse = void 0;
-var PEG = require("../../resources/grammar");
+exports.SingleLineCommentSyntaxTree = exports.TextNodeSyntaxTree = exports.DlistElementSyntaxTree = exports.OlistElementSyntaxTree = exports.UlistElementSyntaxTree = exports.ArgumentSyntaxTree = exports.ColumnHeadlineSyntaxTree = exports.ColumnSyntaxTree = exports.InlineElementSyntaxTree = exports.BlockElementSyntaxTree = exports.HeadlineSyntaxTree = exports.ChapterSyntaxTree = exports.NodeSyntaxTree = exports.SyntaxTree = exports.RuleName = exports.ParseError = void 0;
+exports.parse = parse;
+exports.transform = transform;
+var PEG = __importStar(require("../../resources/grammar"));
 var walker_1 = require("./walker");
 /**
  * 文字列をReVIEW文書として解釈し構文木を返す。
@@ -4467,7 +4529,7 @@ function parse(input) {
     var rawResult = PEG.parse(input);
     var root = transform(rawResult).toNode();
     // ParagraphSubs は構文上の都合であるだけのものなので潰す
-    walker_1.visit(root, {
+    (0, walker_1.visit)(root, {
         visitDefaultPre: function (_ast) {
         },
         visitParagraphPre: function (ast) {
@@ -4482,7 +4544,7 @@ function parse(input) {
     }
     // Ulist もChapter 同様の level 構造があるので同じように処理したい
     var ulistSet = [];
-    walker_1.visit(root, {
+    (0, walker_1.visit)(root, {
         visitDefaultPre: function (ast) {
             if (ast.ruleName === RuleName.Ulist) {
                 ulistSet.push(ast.toNode());
@@ -4493,13 +4555,13 @@ function parse(input) {
         reconstruct(ulist, function (ulistElement) { return ulistElement.level; });
     });
     // parentNode を設定
-    walker_1.visit(root, {
+    (0, walker_1.visit)(root, {
         visitDefaultPre: function (ast, parent) {
             ast.parentNode = parent;
         }
     });
     // prev, next を設定
-    walker_1.visit(root, {
+    (0, walker_1.visit)(root, {
         visitDefaultPre: function (_ast, _parent) {
         },
         visitChapterPre: function (ast) {
@@ -4526,7 +4588,6 @@ function parse(input) {
         cst: rawResult
     };
 }
-exports.parse = parse;
 /**
  * 具象構文木を抽象構文木に変換します。
  * @param rawResult
@@ -4608,7 +4669,6 @@ function transform(rawResult) {
             return new SyntaxTree(rawResult);
     }
 }
-exports.transform = transform;
 /**
  * 構文木の組替えを行う。
  * 主に兄弟ノードを親子ノードに組み替えるために使う。
@@ -4722,7 +4782,7 @@ var RuleName;
     RuleName[RuleName["ColumnTerminator"] = 43] = "ColumnTerminator";
     RuleName[RuleName["SinglelineComments"] = 44] = "SinglelineComments";
     RuleName[RuleName["SinglelineComment"] = 45] = "SinglelineComment";
-})(RuleName = exports.RuleName || (exports.RuleName = {}));
+})(RuleName || (exports.RuleName = RuleName = {}));
 /**
  * 構文解析後の少し加工したデータ。
  */
@@ -5035,6 +5095,7 @@ var ChapterSyntaxTree = /** @class */ (function (_super) {
         _this.text = _this.checkArray(data.text.content).map(function (data) {
             return transform(data);
         });
+        // @ts-ignore 2790
         delete _this.childNodes; // JSON化した時の属性順制御のため…
         _this.childNodes = [];
         return _this;
@@ -5049,7 +5110,7 @@ var ChapterSyntaxTree = /** @class */ (function (_super) {
     Object.defineProperty(ChapterSyntaxTree.prototype, "fqn", {
         get: function () {
             var chapters = [];
-            walker_1.walk(this, function (node) {
+            (0, walker_1.walk)(this, function (node) {
                 if (node instanceof ChapterSyntaxTree) {
                     chapters.unshift(node);
                 }
@@ -5115,6 +5176,7 @@ var ColumnSyntaxTree = /** @class */ (function (_super) {
         _this.text = _this.checkArray(data.text.content).map(function (data) {
             return transform(data);
         });
+        // @ts-ignore 2790
         delete _this.childNodes; // JSON化した時の属性順制御のため…
         _this.childNodes = [];
         return _this;
@@ -5129,7 +5191,7 @@ var ColumnSyntaxTree = /** @class */ (function (_super) {
     Object.defineProperty(ColumnSyntaxTree.prototype, "fqn", {
         get: function () {
             var chapters = [];
-            walker_1.walk(this, function (node) {
+            (0, walker_1.walk)(this, function (node) {
                 if (node instanceof ChapterSyntaxTree) {
                     chapters.unshift(node);
                 }
@@ -5176,6 +5238,7 @@ var UlistElementSyntaxTree = /** @class */ (function (_super) {
         var _this = _super.call(this, data) || this;
         _this.level = _this.checkNumber(data.level);
         _this.text = transform(_this.checkObject(data.text));
+        // @ts-ignore 2790
         delete _this.childNodes; // JSON化した時の属性順制御のため…
         _this.childNodes = [];
         return _this;
@@ -5254,7 +5317,7 @@ var SyntaxPreprocessor = /** @class */ (function () {
     };
     SyntaxPreprocessor.prototype.preprocessChunk = function (chunk) {
         var _this = this;
-        walker_1.visit(chunk.tree.ast, {
+        (0, walker_1.visit)(chunk.tree.ast, {
             visitDefaultPre: function (_node) {
             },
             visitColumnPre: function (node) {
@@ -5285,7 +5348,7 @@ var SyntaxPreprocessor = /** @class */ (function () {
             column.text.splice(column.text.indexOf(target), 1);
         }
         // 組み換え
-        walker_1.visit(column, {
+        (0, walker_1.visit)(column, {
             visitDefaultPre: function (_node) {
             },
             visitColumnPre: function (_node) {
@@ -5300,13 +5363,13 @@ var SyntaxPreprocessor = /** @class */ (function () {
         });
         // Parser.ts からのコピペなので共通ロジックとしてリファクタリングする
         // parentNode を設定
-        walker_1.visit(chunk.tree.ast, {
+        (0, walker_1.visit)(chunk.tree.ast, {
             visitDefaultPre: function (ast, parent) {
                 ast.parentNode = parent;
             }
         });
         // prev, next を設定
-        walker_1.visit(chunk.tree.ast, {
+        (0, walker_1.visit)(chunk.tree.ast, {
             visitDefaultPre: function (_ast, _parent) {
             },
             visitChapterPre: function (ast) {
@@ -5355,7 +5418,7 @@ var SyntaxPreprocessor = /** @class */ (function () {
             var info_1 = null;
             var resultNodes_1 = [];
             var lastNode_1 = null;
-            walker_1.visit(node.childNodes[0], {
+            (0, walker_1.visit)(node.childNodes[0], {
                 visitDefaultPre: function (node) {
                     if (node.ruleName === parser_1.RuleName.InlineElementContents ||
                         node.ruleName === parser_1.RuleName.InlineElementContent ||
@@ -5467,7 +5530,7 @@ var SyntaxPreprocessor = /** @class */ (function () {
                         column: void 0,
                     }
                 },
-                text: utils_1.nodeContentToString(chunk.process, node)
+                text: (0, utils_1.nodeContentToString)(chunk.process, node)
             });
             node.childNodes = [textNode];
         }
@@ -5529,13 +5592,13 @@ var DefaultValidator = /** @class */ (function () {
     DefaultValidator.prototype.checkChunk = function (chunk) {
         var _this = this;
         // Analyzer 内で生成した構文規則に基づき処理
-        walker_1.visit(chunk.tree.ast, {
+        (0, walker_1.visit)(chunk.tree.ast, {
             visitDefaultPre: function (_node) {
             },
             visitHeadlinePre: function (node) {
                 var results = _this.acceptableSyntaxes.find(node);
                 if (results.length !== 1) {
-                    chunk.process.error(i18n_1.t("compile.syntax_definietion_error"), node);
+                    chunk.process.error((0, i18n_1.t)("compile.syntax_definietion_error"), node);
                     return;
                 }
                 return results[0].process(chunk.process, node);
@@ -5543,7 +5606,7 @@ var DefaultValidator = /** @class */ (function () {
             visitColumnPre: function (node) {
                 var results = _this.acceptableSyntaxes.find(node);
                 if (results.length !== 1) {
-                    chunk.process.error(i18n_1.t("compile.syntax_definietion_error"), node);
+                    chunk.process.error((0, i18n_1.t)("compile.syntax_definietion_error"), node);
                     return;
                 }
                 return results[0].process(chunk.process, node);
@@ -5551,14 +5614,14 @@ var DefaultValidator = /** @class */ (function () {
             visitBlockElementPre: function (node) {
                 var results = _this.acceptableSyntaxes.find(node);
                 if (results.length !== 1) {
-                    chunk.process.error(i18n_1.t("compile.block_not_supported", node.symbol), node);
+                    chunk.process.error((0, i18n_1.t)("compile.block_not_supported", node.symbol), node);
                     return;
                 }
                 var expects = results[0].argsLength;
                 var arg = node.args || [];
                 if (expects.indexOf(arg.length) === -1) {
                     var expected = expects.map(function (n) { return Number(n).toString(); }).join(" or ");
-                    var message = i18n_1.t("compile.args_length_mismatch", expected, arg.length);
+                    var message = (0, i18n_1.t)("compile.args_length_mismatch", expected, arg.length);
                     chunk.process.error(message, node);
                     return;
                 }
@@ -5567,27 +5630,27 @@ var DefaultValidator = /** @class */ (function () {
             visitInlineElementPre: function (node) {
                 var results = _this.acceptableSyntaxes.find(node);
                 if (results.length !== 1) {
-                    chunk.process.error(i18n_1.t("compile.inline_not_supported", node.symbol), node);
+                    chunk.process.error((0, i18n_1.t)("compile.inline_not_supported", node.symbol), node);
                     return;
                 }
                 return results[0].process(chunk.process, node);
             }
         });
         // 最初は必ず Level 1
-        walker_1.visit(chunk.tree.ast, {
+        (0, walker_1.visit)(chunk.tree.ast, {
             visitDefaultPre: function (_node) {
             },
             visitChapterPre: function (node) {
                 if (node.level === 1) {
-                    if (!utils_1.findChapter(node)) {
+                    if (!(0, utils_1.findChapter)(node)) {
                         // ここに来るのは実装のバグのはず
-                        chunk.process.error(i18n_1.t("compile.chapter_not_toplevel"), node);
+                        chunk.process.error((0, i18n_1.t)("compile.chapter_not_toplevel"), node);
                     }
                 }
                 else {
-                    var parent_1 = utils_1.findChapter(node.parentNode);
+                    var parent_1 = (0, utils_1.findChapter)(node.parentNode);
                     if (!parent_1) {
-                        chunk.process.error(i18n_1.t("compile.chapter_topleve_eq1"), node);
+                        chunk.process.error((0, i18n_1.t)("compile.chapter_topleve_eq1"), node);
                     }
                 }
             }
@@ -5596,7 +5659,7 @@ var DefaultValidator = /** @class */ (function () {
     };
     DefaultValidator.prototype.chechBlockGraphTool = function (chunk) {
         // graph記法の外部ツール利用について内容が正しいかチェックする
-        walker_1.visit(chunk.tree.ast, {
+        (0, walker_1.visit)(chunk.tree.ast, {
             visitDefaultPre: function (_node) {
             },
             visitBlockElementPre: function (node) {
@@ -5608,17 +5671,17 @@ var DefaultValidator = /** @class */ (function () {
                     // ここのNodeがないのは別でチェックするので気にしない
                     return;
                 }
-                var toolName = utils_1.nodeContentToString(chunk.process, toolNameNode);
+                var toolName = (0, utils_1.nodeContentToString)(chunk.process, toolNameNode);
                 switch (toolName) {
                     case "graphviz":
                         break;
                     case "gnuplot":
                     case "blockdiag":
                     case "aafigure":
-                        chunk.process.info(i18n_1.t("compile.graph_tool_is_not_recommended"), toolNameNode);
+                        chunk.process.info((0, i18n_1.t)("compile.graph_tool_is_not_recommended"), toolNameNode);
                         break;
                     default:
-                        chunk.process.error(i18n_1.t("compile.unknown_graph_tool", toolName), toolNameNode);
+                        chunk.process.error((0, i18n_1.t)("compile.unknown_graph_tool", toolName), toolNameNode);
                 }
             }
         });
@@ -5635,7 +5698,7 @@ var DefaultValidator = /** @class */ (function () {
             }
             if (!referenceTo.chapter && referenceTo.chapterName) {
                 // 各章の名前は拡張子付きで入っているので、比較の為にファイル名にする
-                var chapterFileName_1 = referenceTo.chapterName + ".re";
+                var chapterFileName_1 = "".concat(referenceTo.chapterName, ".re");
                 book.allChunks.forEach(function (chunk) {
                     if (chapterFileName_1 === chunk.name) {
                         referenceTo.chapter = chunk;
@@ -5656,7 +5719,7 @@ var DefaultValidator = /** @class */ (function () {
                     }
                 });
                 if (!reference_1.referenceNode) {
-                    symbol.chapter.process.error(i18n_1.t("compile.reference_is_missing", reference_1.targetSymbol, (_a = reference_1.label) !== null && _a !== void 0 ? _a : reference_1.chapterName), symbol.node);
+                    symbol.chapter.process.error((0, i18n_1.t)("compile.reference_is_missing", reference_1.targetSymbol, (_a = reference_1.label) !== null && _a !== void 0 ? _a : reference_1.chapterName), symbol.node);
                     return;
                 }
             }
@@ -5670,10 +5733,10 @@ var DefaultValidator = /** @class */ (function () {
                 if (symbol1.chapter === symbol2.chapter && symbol1.symbolName === symbol2.symbolName) {
                     if (symbol1.labelName && symbol2.labelName && symbol1.labelName === symbol2.labelName) {
                         if (symbol1.symbolName === "hd") {
-                            symbol1.chapter.process.error(i18n_1.t("compile.duplicated_label_headline"), symbol1.node, symbol2.node);
+                            symbol1.chapter.process.error((0, i18n_1.t)("compile.duplicated_label_headline"), symbol1.node, symbol2.node);
                         }
                         else {
-                            symbol1.chapter.process.error(i18n_1.t("compile.duplicated_label"), symbol1.node, symbol2.node);
+                            symbol1.chapter.process.error((0, i18n_1.t)("compile.duplicated_label"), symbol1.node, symbol2.node);
                         }
                         return;
                     }
@@ -5688,7 +5751,9 @@ exports.DefaultValidator = DefaultValidator;
 },{"../i18n/i18n":8,"../utils/utils":20,"./analyzer":14,"./walker":18}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.visitAsync = exports.visit = exports.walk = void 0;
+exports.walk = walk;
+exports.visit = visit;
+exports.visitAsync = visitAsync;
 var parser_1 = require("./parser");
 /**
  * 指定された構文木を歩きまわる。
@@ -5707,7 +5772,6 @@ function walk(ast, actor) {
         walk(next, actor);
     }
 }
-exports.walk = walk;
 /**
  * 指定された構文木の全てのノード・リーフを同期的に探索する。
  * 親子であれば親のほうが先に探索され、兄弟であれば兄のほうが先に探索される。
@@ -5719,7 +5783,6 @@ function visit(ast, v) {
     "use strict";
     _visit(function () { return new SyncTaskPool(); }, ast, v);
 }
-exports.visit = visit;
 /**
  * 指定された構文木の全てのノード・リーフを非同期に探索する。
  * 親子であれば親のほうが先に探索され、兄弟であれば兄のほうが先に探索される。
@@ -5731,7 +5794,6 @@ function visitAsync(ast, v) {
     "use strict";
     return Promise.resolve(_visit(function () { return new AsyncTaskPool(); }, ast, v));
 }
-exports.visitAsync = visitAsync;
 function _visit(poolGenerator, ast, v) {
     "use strict";
     var newV = {
@@ -6177,14 +6239,28 @@ var AsyncTaskPool = /** @class */ (function () {
 },{"./parser":15}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dlistElement = exports.olistElement = exports.ulistElement = exports.braceArg = exports.columnTerminator = exports.columnHeadline = exports.column = exports.inlineElement = exports.blockElement = exports.headline = exports.chapter = exports.text = exports.contents = exports.content = exports.setup = void 0;
+exports.setup = setup;
+exports.content = content;
+exports.contents = contents;
+exports.text = text;
+exports.chapter = chapter;
+exports.headline = headline;
+exports.blockElement = blockElement;
+exports.inlineElement = inlineElement;
+exports.column = column;
+exports.columnHeadline = columnHeadline;
+exports.columnTerminator = columnTerminator;
+exports.braceArg = braceArg;
+exports.ulistElement = ulistElement;
+exports.olistElement = olistElement;
+exports.dlistElement = dlistElement;
 var parser_1 = require("../parser/parser");
 var env;
 function checkRuleName(ruleName) {
     "use strict";
     // undefined or index 0 is invalid name
     if (!parser_1.RuleName[ruleName]) {
-        throw new Error("unknown rule: " + ruleName);
+        throw new Error("unknown rule: ".concat(ruleName));
     }
     return ruleName;
 }
@@ -6192,7 +6268,6 @@ function setup(_env) {
     "use strict";
     env = _env;
 }
-exports.setup = setup;
 function content(ruleName, c) {
     "use strict";
     return {
@@ -6201,7 +6276,6 @@ function content(ruleName, c) {
         content: c
     };
 }
-exports.content = content;
 function contents(ruleName, c, cc) {
     "use strict";
     var processed = [c];
@@ -6219,7 +6293,6 @@ function contents(ruleName, c, cc) {
         content: processed
     };
 }
-exports.contents = contents;
 function text(ruleName, text) {
     "use strict";
     return {
@@ -6228,7 +6301,6 @@ function text(ruleName, text) {
         text: text
     };
 }
-exports.text = text;
 function chapter(comments, headline, text) {
     "use strict";
     return {
@@ -6239,7 +6311,6 @@ function chapter(comments, headline, text) {
         text: text
     };
 }
-exports.chapter = chapter;
 function headline(level, label, caption) {
     "use strict";
     return {
@@ -6250,7 +6321,6 @@ function headline(level, label, caption) {
         caption: caption
     };
 }
-exports.headline = headline;
 function blockElement(symbol, args, contents) {
     "use strict";
     if (contents === void 0) { contents = []; }
@@ -6262,7 +6332,6 @@ function blockElement(symbol, args, contents) {
         content: contents
     };
 }
-exports.blockElement = blockElement;
 function inlineElement(symbol, contents) {
     "use strict";
     if (contents === void 0) { contents = []; }
@@ -6273,7 +6342,6 @@ function inlineElement(symbol, contents) {
         content: contents
     };
 }
-exports.inlineElement = inlineElement;
 function column(headline, text) {
     "use strict";
     return {
@@ -6283,7 +6351,6 @@ function column(headline, text) {
         text: text
     };
 }
-exports.column = column;
 function columnHeadline(level, label, caption) {
     "use strict";
     return {
@@ -6294,7 +6361,6 @@ function columnHeadline(level, label, caption) {
         caption: caption
     };
 }
-exports.columnHeadline = columnHeadline;
 function columnTerminator(level) {
     "use strict";
     return {
@@ -6303,7 +6369,6 @@ function columnTerminator(level) {
         level: level.length
     };
 }
-exports.columnTerminator = columnTerminator;
 function braceArg(arg) {
     "use strict";
     return {
@@ -6312,7 +6377,6 @@ function braceArg(arg) {
         arg: arg
     };
 }
-exports.braceArg = braceArg;
 function ulistElement(level, text) {
     "use strict";
     return {
@@ -6322,7 +6386,6 @@ function ulistElement(level, text) {
         text: text
     };
 }
-exports.ulistElement = ulistElement;
 function olistElement(n, text) {
     "use strict";
     return {
@@ -6332,7 +6395,6 @@ function olistElement(n, text) {
         text: text
     };
 }
-exports.olistElement = olistElement;
 function dlistElement(text, content) {
     "use strict";
     return {
@@ -6342,12 +6404,25 @@ function dlistElement(text, content) {
         content: content
     };
 }
-exports.dlistElement = dlistElement;
 
 },{"../parser/parser":15}],20:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Exec = exports.stringRepeat = exports.padLeft = exports.linesToFigure = exports.IO = exports.target2builder = exports.getHeadlineLevels = exports.findChapterOrColumn = exports.findChapter = exports.findUp = exports.nodeContentToString = exports.nodeToString = exports.flatten = exports.isAMD = exports.isNodeJS = exports.isBrowser = void 0;
+exports.Exec = exports.IO = void 0;
+exports.isBrowser = isBrowser;
+exports.isNodeJS = isNodeJS;
+exports.isAMD = isAMD;
+exports.flatten = flatten;
+exports.nodeToString = nodeToString;
+exports.nodeContentToString = nodeContentToString;
+exports.findUp = findUp;
+exports.findChapter = findChapter;
+exports.findChapterOrColumn = findChapterOrColumn;
+exports.getHeadlineLevels = getHeadlineLevels;
+exports.target2builder = target2builder;
+exports.linesToFigure = linesToFigure;
+exports.padLeft = padLeft;
+exports.stringRepeat = stringRepeat;
 var compilerModel_1 = require("../model/compilerModel");
 var parser_1 = require("../parser/parser");
 var textBuilder_1 = require("../builder/textBuilder");
@@ -6365,7 +6440,6 @@ function isBrowser() {
     "use strict";
     return typeof window !== "undefined";
 }
-exports.isBrowser = isBrowser;
 /**
  * Node.js上での実行かどうかを判別する。
  * @returns {boolean}
@@ -6378,7 +6452,6 @@ function isNodeJS() {
     }
     return !isBrowser() && !isAMD() && typeof exports === "object";
 }
-exports.isNodeJS = isNodeJS;
 /**
  * AMD環境下での実行かどうかを判別する。
  * @returns {boolean|any}
@@ -6387,7 +6460,6 @@ function isAMD() {
     "use strict";
     return typeof define === "function" && define.amd;
 }
-exports.isAMD = isAMD;
 /**
  * ネストしたArrayを潰して平らにする。
  * Arrayかどうかの判定は Array.isArray を利用。
@@ -6403,12 +6475,10 @@ function flatten(data) {
         return data;
     }
 }
-exports.flatten = flatten;
 function nodeToString(process, node) {
     "use strict";
     return process.input.substring(node.location.start.offset, node.location.end.offset);
 }
-exports.nodeToString = nodeToString;
 function nodeContentToString(process, node, textOnly) {
     "use strict";
     var minPos = Number.MAX_VALUE;
@@ -6426,33 +6496,33 @@ function nodeContentToString(process, node, textOnly) {
         },
         visitNodePre: function (node) {
             // Chapter, Inline, Block もここに来る
-            node.childNodes.forEach(function (child) { return walker_1.visit(child, textOnly ? visitor : childVisitor); });
+            node.childNodes.forEach(function (child) { return (0, walker_1.visit)(child, textOnly ? visitor : childVisitor); });
             return false;
         },
         visitHeadlinePre: function (node) {
-            walker_1.visit(node.caption, childVisitor);
+            (0, walker_1.visit)(node.caption, childVisitor);
             return false;
         },
         visitUlistPre: function (node) {
-            walker_1.visit(node.text, childVisitor);
+            (0, walker_1.visit)(node.text, childVisitor);
             return false;
         },
         visitDlistPre: function (node) {
-            walker_1.visit(node.text, childVisitor);
-            walker_1.visit(node.content, childVisitor);
+            (0, walker_1.visit)(node.text, childVisitor);
+            (0, walker_1.visit)(node.content, childVisitor);
             return false;
         },
         visitOlistPre: function (node) {
-            walker_1.visit(node.text, childVisitor);
+            (0, walker_1.visit)(node.text, childVisitor);
             return false;
         },
         visitTextPre: function (text) {
-            walker_1.visit(textOnly ? text : node, childVisitor);
+            (0, walker_1.visit)(textOnly ? text : node, childVisitor);
             return false;
         }
     };
     // root (子要素だけ抽出したい)
-    walker_1.visit(node, visitor);
+    (0, walker_1.visit)(node, visitor);
     if (maxPos < 0) {
         return "";
     }
@@ -6460,7 +6530,6 @@ function nodeContentToString(process, node, textOnly) {
         return process.input.substring(minPos, maxPos);
     }
 }
-exports.nodeContentToString = nodeContentToString;
 /**
  * 渡した要素から一番近いマッチする要素を探して返す。
  * 見つからなかった場合 null を返す。
@@ -6471,7 +6540,7 @@ exports.nodeContentToString = nodeContentToString;
 function findUp(node, predicate) {
     "use strict";
     var result = null;
-    walker_1.walk(node, function (node) {
+    (0, walker_1.walk)(node, function (node) {
         if (predicate(node)) {
             result = node;
             return null;
@@ -6480,7 +6549,6 @@ function findUp(node, predicate) {
     });
     return result;
 }
-exports.findUp = findUp;
 /**
  * 渡した要素から直近のChapterを探して返す。
  * 見つからなかった場合 null を返す。
@@ -6492,7 +6560,7 @@ exports.findUp = findUp;
 function findChapter(node, level) {
     "use strict";
     var chapter = null;
-    walker_1.walk(node, function (node) {
+    (0, walker_1.walk)(node, function (node) {
         if (node instanceof parser_1.ChapterSyntaxTree) {
             chapter = node;
             if (typeof level === "undefined" || node.level === level) {
@@ -6503,12 +6571,11 @@ function findChapter(node, level) {
     });
     return chapter;
 }
-exports.findChapter = findChapter;
 function findChapterOrColumn(node, level) {
     "use strict";
     var chapter = null;
     var column = null;
-    walker_1.walk(node, function (node) {
+    (0, walker_1.walk)(node, function (node) {
         if (node instanceof parser_1.ChapterSyntaxTree) {
             chapter = node;
             if (typeof level === "undefined" || node.level === level) {
@@ -6525,11 +6592,10 @@ function findChapterOrColumn(node, level) {
     });
     return chapter || column;
 }
-exports.findChapterOrColumn = findChapterOrColumn;
 function getHeadlineLevels(node) {
     var numbers = {};
     var maxLevel = 0;
-    walker_1.walk(node, function (node) {
+    (0, walker_1.walk)(node, function (node) {
         if (node instanceof parser_1.ChapterSyntaxTree) {
             numbers[node.level] = node.no;
             maxLevel = Math.max(maxLevel, node.level);
@@ -6554,7 +6620,6 @@ function getHeadlineLevels(node) {
     }
     return result;
 }
-exports.getHeadlineLevels = getHeadlineLevels;
 function target2builder(target) {
     "use strict";
     // TODO 適当になおす…
@@ -6571,11 +6636,10 @@ function target2builder(target) {
             let ctor = (<any>ReVIEW.Build)[name];
             return new ctor();
         }
-    }
+
      */
     return null;
 }
-exports.target2builder = target2builder;
 /**
  * Node.jsでのIOをざっくり行うためのモジュール。
  */
@@ -6624,7 +6688,7 @@ var IO;
         });
     }
     IO.write = write;
-})(IO = exports.IO || (exports.IO = {}));
+})(IO || (exports.IO = IO = {}));
 /**
  * 行数から桁数の変換 100行 -> 3桁
  */
@@ -6632,7 +6696,6 @@ function linesToFigure(lines) {
     "use strict";
     return String(lines).length;
 }
-exports.linesToFigure = linesToFigure;
 function padLeft(str, pad, maxLength) {
     "use strict";
     if (maxLength <= str.length) {
@@ -6640,12 +6703,10 @@ function padLeft(str, pad, maxLength) {
     }
     return stringRepeat(maxLength - str.length, pad) + str;
 }
-exports.padLeft = padLeft;
 function stringRepeat(times, src) {
     "use strict";
     return new Array(times + 1).join(src);
 }
-exports.stringRepeat = stringRepeat;
 /**
  * 実行するためのヘルパクラス群
  */
@@ -6667,7 +6728,7 @@ var Exec;
             if (target) {
                 var builder = target2builder(target);
                 if (!builder) {
-                    return Promise.reject("unknown target: " + target);
+                    return Promise.reject("unknown target: ".concat(target));
                 }
                 config.builders = [builder];
             }
@@ -6707,7 +6768,7 @@ var Exec;
         config.listener.onCompileFailed = function (book) {
             originalCompileFailed(book);
         };
-        return index_1.start(function (review) {
+        return (0, index_1.start)(function (review) {
             review.initConfig(config);
         })
             .then(function (book) {
@@ -6718,7 +6779,7 @@ var Exec;
         });
     }
     Exec.singleCompile = singleCompile;
-})(Exec = exports.Exec || (exports.Exec = {}));
+})(Exec || (exports.Exec = Exec = {}));
 
 },{"../builder/htmlBuilder":2,"../builder/textBuilder":3,"../index":11,"../model/compilerModel":13,"../parser/analyzer":14,"../parser/parser":15,"../parser/validator":17,"../parser/walker":18,"fs":undefined}],21:[function(require,module,exports){
 /*
