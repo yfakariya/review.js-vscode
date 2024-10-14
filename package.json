@@ -9,6 +9,7 @@
     "reviewjs": "./bin/reviewjs"
   },
   "scripts": {
+    "setup": "npm run clean",
     "prebuild": "npm run clean",
     "build": "tsc",
     "postbuild": "npm run eslint & npm run pegjs & npm run esbuildMain & npm run esbuildMainMinify",
