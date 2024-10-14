@@ -89,8 +89,6 @@ export function headline(level: any, label: any, caption: any): ConcreatSyntaxTr
 }
 
 export function blockElement(symbol: any, args: any, contents: any[] = []): ConcreatSyntaxTree {
-    "use strict";
-
     return {
         syntax: checkRuleName("BlockElement"),
         location: env.location(),
@@ -101,8 +99,6 @@ export function blockElement(symbol: any, args: any, contents: any[] = []): Conc
 }
 
 export function inlineElement(symbol: any, contents: any[] = []): ConcreatSyntaxTree {
-    "use strict";
-
     return {
         syntax: checkRuleName("InlineElement"),
         location: env.location(),

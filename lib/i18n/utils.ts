@@ -1,8 +1,6 @@
 "use strict";
 
 export function deepAssign(target: any, ...args: any[]) {
-    "use strict";
-
     args.forEach(arg => {
         Object.keys(arg).forEach(key => {
             if (typeof arg[key] !== "object") {

@@ -3,5 +3,5 @@ ISERROR=0
 
 rm -rf node_modules && \
 npm install && \
-npx grunt setup && \
+npm run setup && \
 echo "OK!"

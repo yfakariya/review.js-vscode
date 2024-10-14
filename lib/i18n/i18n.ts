@@ -14,8 +14,6 @@ let langs: any = {
 let resource: any = deepAssign({}, langs.en, langs.ja);
 
 export function setup(lang = "ja") {
-    "use strict";
-
     resource = deepAssign({}, langs.en, langs.ja, langs[lang]);
 }
 
@@ -31,8 +29,6 @@ if (isNodeJS != null) {
 }
 
 export function t(str: string, ...args: any[]): string {
-    "use strict";
-
     let parts = str.split(".");
     let base = resource;
     parts.forEach(part => {

@@ -1,6 +1,5 @@
 import jsdoc from "eslint-plugin-jsdoc";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import typescriptEslintTslint from "@typescript-eslint/eslint-plugin-tslint";
 import stylistic from "@stylistic/eslint-plugin";
 import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
@@ -8,7 +7,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
-import { isPropertyDeclaration, isVariableDeclaration } from "typescript";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +20,6 @@ export default [{
     plugins: {
         jsdoc,
         "@typescript-eslint": typescriptEslint,
-        "@typescript-eslint/tslint": typescriptEslintTslint,
         "@stylistic": stylistic
     },
 
@@ -53,11 +50,10 @@ export default [{
     ],
 
     rules: {
-        "@typescript-eslint/tslint/config": ["error", {
-            rules: {
-                ban: [true, ["angular", "forEach"]],
-            },
-        }],
+        "no-restricted-globals": ["error",
+            "angular",
+            "forEach"
+        ],
 
         "@typescript-eslint/naming-convention": ["error", {
             selector: "variable",
