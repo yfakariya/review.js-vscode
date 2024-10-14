@@ -52,13 +52,13 @@ export class SyntaxPreprocessor implements Preprocessor {
         chunk.nodes.forEach(chunk => this.preprocessChunk(chunk));
     }
 
-	/**
-	 * コラム記法を組み替える。
-	 * コラムの中ではHeadlineが使えるが、コラム自体の見出しレベルより深いレベルのHeadlineしか許可されない。
-	 * そのため、コラム自体より浅いレベルの見出しレベルを見つけたらコラム内から脱出させる。
-	 * @param chunk
-	 * @param column
-	 */
+    /**
+     * コラム記法を組み替える。
+     * コラムの中ではHeadlineが使えるが、コラム自体の見出しレベルより深いレベルのHeadlineしか許可されない。
+     * そのため、コラム自体より浅いレベルの見出しレベルを見つけたらコラム内から脱出させる。
+     * @param chunk
+     * @param column
+     */
     preprocessColumnSyntax(chunk: ContentChunk, column: ColumnSyntaxTree) {
         function reconstruct(parent: NodeSyntaxTree, target: ChapterSyntaxTree, to = column.parentNode.toChapter()) {
             if (target.level <= to.level) {
@@ -119,12 +119,12 @@ export class SyntaxPreprocessor implements Preprocessor {
 
     }
 
-	/**
-	 * ブロック記法の中身を組み替える。
-	 * ブロック記法は 1. 全ての記法を許可 2. インライン記法のみ許可 3. 全てを許可しない の3パターンの組み換えがある。
-	 * @param chapter
-	 * @param node
-	 */
+    /**
+     * ブロック記法の中身を組み替える。
+     * ブロック記法は 1. 全ての記法を許可 2. インライン記法のみ許可 3. 全てを許可しない の3パターンの組み換えがある。
+     * @param chapter
+     * @param node
+     */
     preprocessBlockSyntax(chunk: ContentChunk, node: BlockElementSyntaxTree) {
         if (node.childNodes.length === 0) {
             return;
