@@ -33,11 +33,13 @@ setup.cmd
 setup.sh
 bower.json
 tsd.json
+eslint.config.mjs
 Gruntfile.js
 karma.conf.js
 Gemfile*
 npm-shrinkwrap.json
 tsconfig.json
+tsconfig.eslint.json
 tslint.json
 ReVIEWSyntax.xhtml
 
